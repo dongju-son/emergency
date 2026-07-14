@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>긴급출동! 경찰 서장이 되어라</title>
+  <style>
+    :root{
+      --blue:#246BFD;
+      --navy:#17315D;
+      --sky:#DFF2FF;
+      --yellow:#FFD84D;
+      --red:#FF5D5D;
+      --green:#31C66B;
+      --cream:#FFF9EC;
+      --ink:#23314D;
+      --card:#FFFFFF;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+      background:linear-gradient(180deg,#bfe8ff 0%,#f9fdff 55%,#fff7dc 100%);
+      color:var(--ink);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .app{max-width:980px;margin:0 auto;padding:18px}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;
+      background:rgba(255,255,255,.88);backdrop-filter: blur(10px);
+      padding:10px 14px;border-radius:18px;box-shadow:0 10px 30px rgba(23,49,93,.12);
+      position:sticky;top:10px;z-index:5;
+    }
+    .brand{display:flex;gap:10px;align-items:center;font-weight:900}
+    .brand .badge{width:42px;height:42px;border-radius:14px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:24px}
+    .stats{display:flex;gap:10px;align-items:center;font-weight:800;font-size:14px}
+    .pill{padding:9px 12px;border-radius:999px;background:#fff;border:2px solid #e8efff}
+    .screen{display:none;animation:fade .35s ease}
+    .screen.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .hero{
+      margin-top:18px;background:linear-gradient(135deg,#1e64f4,#2449ad);
+      color:white;border-radius:30px;padding:34px;position:relative;overflow:hidden;
+      box-shadow:0 18px 45px rgba(35,83,180,.28)
+    }
+    .hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.12)}
+    .hero:before{width:220px;height:220px;right:-60px;top:-60px}
+    .hero:after{width:130px;height:130px;right:120px;bottom:-70px}
+    .hero h1{font-size:clamp(34px,6vw,64px);line-height:1.03;margin:0 0 12px;letter-spacing:-2px}
+    .hero p{font-size:18px;max-width:620px;line-height:1.65;margin:0 0 24px}
+    .hero-emoji{font-size:110px;position:absolute;right:38px;bottom:18px;filter:drop-shadow(0 12px 14px rgba(0,0,0,.2))}
+    .btn{border:0;border-radius:18px;padding:15px 22px;font-size:18px;font-weight:900;cursor:pointer;transition:.2s;box-shadow:0 8px 0 rgba(0,0,0,.12)}
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(5px);box-shadow:0 3px 0 rgba(0,0,0,.12)}
+    .btn-primary{background:var(--yellow);color:#4a3b00}
+    .btn-secondary{background:#fff;color:var(--blue)}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+    .menu-card{background:var(--card);border-radius:24px;padding:22px;text-align:center;box-shadow:0 12px 30px rgba(35,49,77,.1);cursor:pointer;border:3px solid transparent}
+    .menu-card:hover{border-color:#bcd7ff;transform:translateY(-3px)}
+    .menu-card .icon{font-size:48px}.menu-card h3{margin:8px 0 4px}.menu-card p{margin:0;color:#63708a;font-size:14px}
+    .panel{margin-top:18px;background:rgba(255,255,255,.93);border-radius:28px;padding:24px;box-shadow:0 14px 35px rgba(35,49,77,.12)}
+    .map{display:grid;gap:14px;position:relative}
+    .stage{display:flex;align-items:center;gap:16px;padding:18px;border-radius:22px;background:#fff;border:3px solid #e8efff;cursor:pointer}
+    .stage.locked{opacity:.45;filter:grayscale(1);cursor:not-allowed}
+    .stage.done{border-color:#77db9c;background:#f0fff5}
+    .stage.current{border-color:var(--yellow);background:#fff9d8}
+    .stage .num{width:54px;height:54px;border-radius:18px;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:24px;font-weight:900}
+    .stage h3{margin:0 0 4px}.stage p{margin:0;color:#68758d}
+    .mission-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .progress{height:14px;background:#e9eef9;border-radius:999px;overflow:hidden;margin:14px 0 22px}.progress>div{height:100%;background:linear-gradient(90deg,var(--yellow),#ff9f43);width:0;transition:.35s}
+    .radio{background:linear-gradient(135deg,#1b2f52,#253f6e);color:white;border-radius:24px;padding:24px;position:relative;overflow:hidden}
+    .radio:before{content:"📻";font-size:78px;position:absolute;right:18px;bottom:5px;opacity:.25}
+    .radio small{color:#a9c9ff;font-weight:800}.radio h2{margin:6px 0 0;font-size:26px;line-height:1.45}
+    .question{font-size:26px;font-weight:900;line-height:1.45;margin:24px 0 16px}
+    .answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .answer{background:#fff;border:3px solid #e6ebf5;border-radius:20px;padding:18px;text-align:left;font-size:18px;font-weight:800;cursor:pointer;transition:.15s}
+    .answer:hover{border-color:#9ec2ff;background:#f7fbff}.answer.correct{border-color:var(--green);background:#edfff3}.answer.wrong{border-color:var(--red);background:#fff0f0}
+    .event{background:#fff7cf;border:3px solid var(--yellow);border-radius:22px;padding:18px;margin:18px 0;display:flex;gap:14px;align-items:center}.event .eicon{font-size:42px}
+    .result{text-align:center;padding:28px}.result .big{font-size:90px}.result h2{font-size:34px;margin:8px}.result p{font-size:18px;line-height:1.6;color:#5c6a82}
+    .collection{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.vehicle{background:#fff;border-radius:22px;padding:18px;text-align:center;border:3px solid #e8efff}.vehicle.locked{filter:grayscale(1);opacity:.45}.vehicle .vicon{font-size:58px}.vehicle h3{margin:8px 0 4px}.vehicle p{margin:0;color:#6b7890;font-size:14px}
+    .footer-note{text-align:center;color:#738098;padding:18px 0;font-size:13px}
+    @media(max-width:720px){
+      .hero{padding:26px 22px 120px}.hero-emoji{right:24px;font-size:92px}.grid,.collection{grid-template-columns:1fr}.answers{grid-template-columns:1fr}.topbar{align-items:flex-start}.stats{flex-wrap:wrap;justify-content:flex-end}.pill{padding:7px 9px;font-size:12px}.question{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="badge">🚨</div><div>안전도시<br><span style="color:var(--blue)">긴급출동대</span></div></div>
+    <div class="stats">
+      <div class="pill">❤️ <span id="lives">3</span></div>
+      <div class="pill">⭐ <span id="stars">0</span></div>
+      <div class="pill">👮 <span id="rank">신입 경찰</span></div>
+    </div>
+  </div>
+
+  <section id="home" class="screen active">
+    <div class="hero">
+      <h1>긴급출동!<br>경찰 서장이 되어라</h1>
+      <p>안전도시에서 벌어지는 다섯 가지 사건을 해결하세요. 시민을 돕고, 차량을 모으고, 최고의 경찰 서장에 도전하세요!</p>
+      <button class="btn btn-primary" onclick="showScreen('map')">게임 시작</button>
+      <div class="hero-emoji">🚓</div>
+    </div>
+    <div class="grid">
+      <div class="menu-card" onclick="showScreen('map')"><div class="icon">🗺️</div><h3>사건 지도</h3><p>다섯 개의 사건을 차례로 해결해요.</p></div>
+      <div class="menu-card" onclick="showScreen('collection')"><div class="icon">🚑</div><h3>차량 도감</h3><p>구조에 필요한 차량을 모아요.</p></div>
+      <div class="menu-card" onclick="resetGame()"><div class="icon">🔄</div><h3>처음부터</h3><p>게임 기록을 새로 시작해요.</p></div>
+    </div>
+  </section>
+
+  <section id="map" class="screen">
+    <div class="panel">
+      <div class="mission-head"><div><h1 style="margin:0">사건 지도</h1><p style="color:#6b7890">완료한 사건만큼 새로운 지역이 열립니다.</p></div><button class="btn btn-secondary" onclick="showScreen('home')">홈</button></div>
+      <div id="stageList" class="map"></div>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="panel">
+      <div class="mission-head"><div><div id="stageLabel" style="font-weight:900;color:var(--blue)"></div><h1 id="stageTitle" style="margin:4px 0"></h1></div><button class="btn btn-secondary" onclick="showScreen('map')">나가기</button></div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <div id="eventBox"></div>
+      <div class="radio"><small>본부 긴급 무전</small><h2 id="storyText"></h2></div>
+      <div id="questionText" class="question"></div>
+      <div id="answers" class="answers"></div>
+    </div>
+  </section>
+
+  <section id="result" class="screen">
+    <div class="panel result">
+      <div id="resultIcon" class="big">🎉</div>
+      <h2 id="resultTitle">사건 해결!</h2>
+      <p id="resultText"></p>
+      <button class="btn btn-primary" onclick="continueAfterResult()">다음으로</button>
+    </div>
+  </section>
+
+  <section id="collection" class="screen">
+    <div class="panel">
+      <div class="mission-head"><div><h1 style="margin:0">긴급차량 도감</h1><p style="color:#6b7890">사건을 해결하면 차량이 잠금 해제됩니다.</p></div><button class="btn btn-secondary" onclick="showScreen('home')">홈</button></div>
+      <div id="collectionGrid" class="collection"></div>
+    </div>
+  </section>
+
+  <div class="footer-note">시즌 1 프로토타입 · 단일 HTML 파일</div>
+</div>
+
+<script>
+const stages = [
+  {
+    title:'학교 앞 교통사고', icon:'🚸', vehicle:'🚑', vehicleName:'구급차', rank:'교통 경찰',
+    story:'학교 앞에서 자동차끼리 부딪쳤어요. 한 학생이 다리를 다쳐 움직이지 못합니다.',
+    questions:[
+      {q:'가장 먼저 해야 할 일은 무엇일까요?', a:['다친 학생을 억지로 일으킨다','주변 어른에게 알리고 119에 신고한다','사진을 찍는다','사고 난 차에 올라탄다'], c:1},
+      {q:'구급차가 오기 전 가장 안전한 행동은 무엇일까요?', a:['학생이 안전한 곳에 있도록 돕는다','학생을 혼자 두고 간다','도로 한가운데 모인다','차량을 만져 본다'], c:0},
+      {q:'사이렌을 울리는 구급차가 뒤에서 오면 어떻게 해야 할까요?', a:['길을 비켜 준다','더 빠르게 달린다','구급차 뒤를 따라간다','경적을 울린다'], c:0},
+      {q:'사고 현장 주변에서 경찰이 하는 일은 무엇일까요?', a:['교통을 정리하고 사람들을 안전하게 이동시킨다','사진만 찍는다','가게 문을 닫는다','도로에 장난감을 놓는다'], c:0},
+      {q:'학생이 병원으로 출발했습니다. 이제 가장 알맞은 행동은?', a:['안전한 곳에서 안내를 기다린다','사고 현장으로 뛰어든다','구급차를 쫓아간다','차량 사이로 지나간다'], c:0}
+    ]
+  },
+  {
+    title:'사라진 보석 상자', icon:'💎', vehicle:'🚓', vehicleName:'경찰차', rank:'순찰 경찰',
+    story:'박물관에서 보석 상자가 사라졌어요. 바닥에는 젖은 발자국이 남아 있습니다.',
+    questions:[
+      {q:'가장 먼저 해야 할 일은 무엇일까요?', a:['발자국을 지운다','현장을 건드리지 않고 경찰에 알린다','보석을 찾으러 혼자 나간다','문을 모두 연다'], c:1},
+      {q:'젖은 발자국이 창고 쪽으로 이어집니다. 무엇을 확인해야 할까요?', a:['발자국의 방향과 크기','벽의 색깔','의자 개수','창문의 모양'], c:0},
+      {q:'창고 문이 열려 있습니다. 가장 안전한 선택은?', a:['혼자 바로 들어간다','지원 경찰이 올 때까지 주변을 살핀다','큰 소리로 뛰어간다','문을 잠그고 떠난다'], c:1},
+      {q:'감시카메라에는 검은 우산을 든 사람이 찍혔습니다. 이 정보는 무엇일까요?', a:['단서','장난','보상','교통표지'], c:0},
+      {q:'범인이 잡힌 뒤 경찰이 가장 먼저 해야 할 일은?', a:['증거를 정리하고 사건 내용을 기록한다','증거를 버린다','모두에게 비밀로 한다','바로 집에 간다'], c:0}
+    ]
+  },
+  {
+    title:'길 잃은 아이 찾기', icon:'🧸', vehicle:'🐕', vehicleName:'경찰견', rank:'베테랑 경찰',
+    story:'축제장에서 어린아이가 가족을 잃어버렸어요. 아이는 파란 풍선을 들고 있습니다.',
+    questions:[
+      {q:'아이에게 가장 먼저 어떻게 말해야 할까요?', a:['울지 마!','괜찮아, 우리가 가족을 찾아줄게','혼자 찾아가','여기서 기다리지 마'], c:1},
+      {q:'가족을 찾는 데 가장 도움이 되는 정보는?', a:['부모님의 옷차림과 이름','아이가 좋아하는 음식','축제 노래 제목','날씨'], c:0},
+      {q:'축제장이 매우 붐빕니다. 아이를 어디에 있게 해야 할까요?', a:['안내소처럼 안전하고 눈에 잘 띄는 곳','주차장 한가운데','혼자 화장실 앞','사람이 없는 골목'], c:0},
+      {q:'경찰견이 아이의 가방 냄새를 맡았습니다. 다음 행동은?', a:['경찰견과 함께 주변을 체계적으로 찾는다','경찰견을 혼자 보낸다','가방을 버린다','축제를 끝낸다'], c:0},
+      {q:'멀리서 아이의 이름을 부르는 소리가 들립니다. 무엇을 확인해야 할까요?', a:['보호자인지 신원을 확인한다','바로 아이를 보낸다','소리를 무시한다','아이에게 뛰어가라고 한다'], c:0}
+    ]
+  },
+  {
+    title:'캠핑장 대형 화재', icon:'🔥', vehicle:'🚒', vehicleName:'소방차', rank:'현장 지휘관',
+    story:'바람이 강한 밤, 캠핑장 한쪽에서 불이 번지고 있습니다. 텐트 안에는 사람들이 남아 있습니다.',
+    questions:[
+      {q:'가장 먼저 해야 할 행동은?', a:['사람들에게 화재를 알리고 119에 신고한다','불 가까이에서 구경한다','텐트 안으로 혼자 들어간다','바람 방향으로 달린다'], c:0},
+      {q:'바람이 강하게 불 때 가장 위험한 곳은?', a:['불이 번지는 바람 아래쪽','안전요원이 있는 곳','넓은 주차장','대피소'], c:0},
+      {q:'연기가 많은 곳에서 이동할 때 가장 알맞은 자세는?', a:['몸을 낮추고 입과 코를 가린다','서서 뛰어간다','큰 소리로 노래한다','연기 쪽으로 간다'], c:0},
+      {q:'소방차와 함께 구급차도 필요한 이유는?', a:['연기를 마시거나 다친 사람을 치료하기 위해','물을 더 많이 싣기 위해','도로를 칠하기 위해','텐트를 옮기기 위해'], c:0},
+      {q:'불길이 잡힌 뒤에도 해야 하는 일은?', a:['남은 불씨와 위험한 장소를 확인한다','바로 모두 돌아간다','소방 장비를 만진다','재가 된 곳에 들어간다'], c:0}
+    ]
+  },
+  {
+    title:'태풍 속 도시 구조작전', icon:'🌪️', vehicle:'🚁', vehicleName:'구조 헬리콥터', rank:'경찰 서장',
+    story:'강한 태풍으로 도로가 물에 잠겼고, 옥상에 시민들이 구조를 기다리고 있습니다.',
+    questions:[
+      {q:'침수된 도로를 발견했을 때 가장 안전한 판단은?', a:['깊이를 모르므로 들어가지 않고 우회한다','차로 빠르게 건넌다','걸어서 확인한다','물살에 물건을 던진다'], c:0},
+      {q:'옥상 시민을 구조하기에 가장 알맞은 수단은?', a:['구조 헬리콥터','시내버스','자전거','택시'], c:0},
+      {q:'전봇대가 쓰러져 전선이 물에 닿았습니다. 무엇을 해야 할까요?', a:['가까이 가지 말고 즉시 신고한다','나뭇가지로 전선을 민다','물속으로 들어간다','사진을 가까이서 찍는다'], c:0},
+      {q:'구조 순서를 정할 때 가장 먼저 고려할 사람은?', a:['다치거나 움직이기 어려운 사람','가장 큰 가방을 든 사람','가장 큰 소리로 말하는 사람','가장 가까운 친구'], c:0},
+      {q:'모든 시민이 구조되었습니다. 경찰 서장이 마지막으로 할 일은?', a:['현장 안전을 다시 확인하고 구조팀을 정리한다','혼자 먼저 떠난다','장비를 길에 둔다','사건 기록을 지운다'], c:0}
+    ]
+  }
+];
+
+let state = JSON.parse(localStorage.getItem('safeCityState') || '{"completed":0,"stars":0,"lives":3,"unlocked":0}');
+let currentStage=0,currentQuestion=0,stageScore=0;
+const events=[
+  {icon:'🐶',title:'경찰견 지원!',text:'경찰견이 힌트를 알려줍니다. 정답 후보가 살짝 강조됩니다.',good:true},
+  {icon:'🌧️',title:'갑작스러운 폭우!',text:'시야가 흐려졌습니다. 침착하게 문제를 읽어 보세요.',good:false},
+  {icon:'📻',title:'본부의 응원!',text:'본부에서 응원 메시지가 도착했습니다. 별 1개를 받았습니다.',good:true,star:1},
+  {icon:'🚧',title:'도로 공사 발견!',text:'길이 복잡합니다. 보기를 천천히 확인하세요.',good:false}
+];
+
+function save(){localStorage.setItem('safeCityState',JSON.stringify(state));updateTop();}
+function updateTop(){document.getElementById('lives').textContent=state.lives;document.getElementById('stars').textContent=state.stars;document.getElementById('rank').textContent=state.completed===0?'신입 경찰':stages[Math.min(state.completed-1,4)].rank;}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='map')renderMap();if(id==='collection')renderCollection();window.scrollTo({top:0,behavior:'smooth'});}
+function renderMap(){
+  const list=document.getElementById('stageList');list.innerHTML='';
+  stages.forEach((s,i)=>{
+    const locked=i>state.completed;const done=i<state.completed;const current=i===state.completed;
+    const div=document.createElement('div');div.className='stage '+(locked?'locked ':done?'done ':current?'current ':'');
+    div.innerHTML=`<div class="num">${done?'✓':i+1}</div><div style="font-size:38px">${s.icon}</div><div style="flex:1"><h3>${s.title}</h3><p>${locked?'이전 사건을 먼저 해결하세요':done?'사건 해결 완료':'출동 가능'}</p></div><div style="font-size:28px">${locked?'🔒':'▶️'}</div>`;
+    if(!locked)div.onclick=()=>startStage(i);list.appendChild(div);
+  });
+}
+function startStage(i){currentStage=i;currentQuestion=0;stageScore=0;showScreen('game');loadQuestion();}
+function loadQuestion(){
+  const s=stages[currentStage],q=s.questions[currentQuestion];
+  document.getElementById('stageLabel').textContent=`사건 ${currentStage+1} / 5 · 문제 ${currentQuestion+1} / 5`;
+  document.getElementById('stageTitle').textContent=`${s.icon} ${s.title}`;
+  document.getElementById('progressBar').style.width=`${currentQuestion*20}%`;
+  document.getElementById('storyText').textContent=currentQuestion===0?s.story:'현장 상황이 계속되고 있습니다. 다음 판단을 내려 주세요.';
+  document.getElementById('questionText').textContent=q.q;
+  const box=document.getElementById('eventBox');box.innerHTML='';
+  if(Math.random()<0.32){const ev=events[Math.floor(Math.random()*events.length)];if(ev.star){state.stars+=ev.star;save();}box.innerHTML=`<div class="event"><div class="eicon">${ev.icon}</div><div><strong>${ev.title}</strong><br><span>${ev.text}</span></div></div>`;}
+  const answers=document.getElementById('answers');answers.innerHTML='';
+  q.a.forEach((text,idx)=>{const b=document.createElement('button');b.className='answer';b.textContent=`${idx+1}. ${text}`;b.onclick=()=>answer(idx,b);answers.appendChild(b);});
+}
+function answer(idx,btn){
+  const q=stages[currentStage].questions[currentQuestion];document.querySelectorAll('.answer').forEach(b=>b.disabled=true);
+  if(idx===q.c){btn.classList.add('correct');stageScore++;state.stars++;save();setTimeout(nextQuestion,650);}else{btn.classList.add('wrong');document.querySelectorAll('.answer')[q.c].classList.add('correct');state.lives=Math.max(0,state.lives-1);save();setTimeout(nextQuestion,950);}
+}
+function nextQuestion(){currentQuestion++;if(currentQuestion<5){loadQuestion();document.getElementById('progressBar').style.width=`${currentQuestion*20}%`;}else{finishStage();}}
+function finishStage(){
+  const s=stages[currentStage];
+  if(currentStage===state.completed)state.completed=Math.min(5,state.completed+1);
+  state.unlocked=Math.max(state.unlocked,currentStage+1);state.lives=Math.max(state.lives,1);save();
+  document.getElementById('resultIcon').textContent=currentStage===4?'🏆':s.vehicle;
+  document.getElementById('resultTitle').textContent=currentStage===4?'경찰 서장 임명!':'사건 해결 완료!';
+  document.getElementById('resultText').innerHTML=currentStage===4?`다섯 개의 사건을 모두 해결했습니다.<br><strong>안전도시의 새로운 경찰 서장</strong>이 되었습니다!<br><br>이번 사건 점수: ${stageScore} / 5`:`시민들이 안전해졌습니다.<br>새로운 도감 보상: <strong>${s.vehicle} ${s.vehicleName}</strong><br><br>이번 사건 점수: ${stageScore} / 5`;
+  showScreen('result');
+}
+function continueAfterResult(){showScreen(currentStage===4?'home':'map');}
+function renderCollection(){
+  const grid=document.getElementById('collectionGrid');grid.innerHTML='';
+  stages.forEach((s,i)=>{const unlocked=i<state.unlocked;const d=document.createElement('div');d.className='vehicle '+(unlocked?'':'locked');d.innerHTML=`<div class="vicon">${unlocked?s.vehicle:'❓'}</div><h3>${unlocked?s.vehicleName:'잠긴 차량'}</h3><p>${unlocked?['다친 사람을 병원으로 옮깁니다.','경찰이 빠르게 현장으로 출동합니다.','냄새를 따라 사람과 단서를 찾습니다.','불을 끄고 사람을 구조합니다.','하늘에서 고립된 시민을 구조합니다.'][i]:'사건을 해결하면 열립니다.'}</p>`;grid.appendChild(d);});
+}
+function resetGame(){if(confirm('게임 기록을 모두 지우고 처음부터 시작할까요?')){state={completed:0,stars:0,lives:3,unlocked:0};save();renderMap();renderCollection();alert('새 게임이 시작되었습니다!');}}
+updateTop();
+</script>
+</body>
+</html>
