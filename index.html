@@ -214,6 +214,36 @@
   .dialogue-arrow.visible{display:inline-block;animation:blinkArrow 1s steps(2) infinite;}
   @keyframes blinkArrow{50%{opacity:0;}}
 
+  .alert-banner{
+    display:none;
+    font-weight:800;
+    font-size:1.05rem;
+    color:#fff;
+    background:linear-gradient(135deg,var(--danger),#ff4d4d);
+    border-radius:999px;
+    padding:.5rem 1.2rem;
+    margin-bottom:.5rem;
+  }
+  .screen-event-alert .alert-banner{display:inline-block;animation:alertPulse 1s ease-in-out infinite;}
+  @keyframes alertPulse{
+    0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,77,77,.55);}
+    50%{transform:scale(1.06);box-shadow:0 0 0 10px rgba(255,77,77,0);}
+  }
+  .screen-event-alert #event-emoji{animation:radioShake .5s ease-in-out infinite;}
+  @keyframes radioShake{
+    0%,100%{transform:rotate(0deg);}
+    25%{transform:rotate(-10deg);}
+    75%{transform:rotate(10deg);}
+  }
+  .screen-event-alert #event-dialogue-box{
+    border-color:var(--danger);
+    animation:dialogueFlash 1.1s ease-in-out infinite;
+  }
+  @keyframes dialogueFlash{
+    0%,100%{box-shadow:0 0 0 3px #f4f6ff, 0 6px 0 rgba(0,0,0,.3);}
+    50%{box-shadow:0 0 0 3px #ffb3b3, 0 6px 0 rgba(0,0,0,.3);}
+  }
+
   .options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:.8rem;}
   .option-btn{
     background:var(--card);
@@ -437,10 +467,11 @@
     <div class="options" id="options"></div>
   </section>
 
-  <!-- 안전박사 이벤트 -->
+  <!-- 안전박사 이벤트 / 긴급 무전 이벤트 -->
   <section class="screen" id="screen-event">
-    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
-    <div class="dialogue-box">
+    <div class="alert-banner" id="event-alert-banner">🚨 긴급 무전! 🚨</div>
+    <div class="hero-emoji" id="event-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box" id="event-dialogue-box">
       <div class="dialogue-text" id="event-text"></div>
     </div>
     <button class="btn btn-primary" id="btn-event-continue">계속하기</button>
@@ -607,9 +638,7 @@
 
   var SAFETY_PROFESSOR_INTRO_TEXT = "안녕! 나는 리틀 히어로 아카데미의 안전박사란다.\n\n이곳은 위험한 순간에 어떻게 행동해야 하는지 배우는 곳이야.\n\n그리고 이 아카데미 밖에는 리틀 히어로 타운이 있지.\n그곳에는 경찰 안전본부, 소방 안전본부, 구급 안전본부가 있단다.\n\n오늘부터 너는 이 마을의 신입 리틀 히어로야.\n여러 안전본부의 미션을 해결하며 진짜 안전대장으로 성장해보자!";
 
-  // hq 필드는 나중에 경찰/소방/구급 본부별 이벤트를 구분해 추가할 때 쓰는 용도.
-  // 지금은 트리거 매칭에 쓰이진 않지만, 본부별 이벤트가 늘어나면
-  // triggerStoryEvent에 hq 조건을 추가해 필터링하면 된다.
+  // hq 필드가 있는 이벤트는 해당 본부 스테이지에서만 표시된다.
   var storyEvents = [
     {
       id: "intro_hint",
@@ -635,6 +664,13 @@
     }
   ];
 
+  var SURPRISE_EVENTS = {
+    fire: "치지직... 무전이 왔어요!\n\"근처 건물에서 불이야! 신고가 들어왔습니다!\"\n\n{playerName}, 계속 힘내서 훈련하자!",
+    police: "치지직... 무전이 왔어요!\n\"근처에서 도와달라는 신고가 들어왔습니다!\"\n\n{playerName}, 조금만 더 힘내자!",
+    medical: "치지직... 무전이 왔어요!\n\"다친 친구가 있다는 신고가 들어왔습니다!\"\n\n{playerName}, 침착하게 계속 가보자!",
+    travel: "치지직... 무전이 왔어요!\n\"여행 중인 친구에게 도움이 필요하대요!\"\n\n{playerName}, 끝까지 훈련해보자!"
+  };
+
   function fillTemplate(text){
     return text.split("{playerName}").join(playerName());
   }
@@ -643,15 +679,27 @@
 
   function showSafetyProfessorEvent(text, onContinue){
     pendingEventContinue = onContinue;
+    $("screen-event").classList.remove("screen-event-alert");
+    $("event-emoji").textContent = "🧑‍🔬";
     showScreen("screen-event");
     typeText($("event-text"), fillTemplate(text));
   }
 
-  function triggerStoryEvent(triggerName, onContinue){
+  function triggerSurpriseEvent(hq, onContinue){
+    pendingEventContinue = onContinue;
+    var text = SURPRISE_EVENTS[hq] || SURPRISE_EVENTS.fire;
+    $("screen-event").classList.add("screen-event-alert");
+    $("event-emoji").textContent = "📻";
+    showScreen("screen-event");
+    typeText($("event-text"), fillTemplate(text));
+  }
+
+  function triggerStoryEvent(triggerName, hq, onContinue){
     var ev = null;
     for(var i=0;i<storyEvents.length;i++){
-      if(storyEvents[i].trigger === triggerName && !storyEvents[i].shown){
-        ev = storyEvents[i];
+      var candidate = storyEvents[i];
+      if(candidate.trigger === triggerName && !candidate.shown && (!candidate.hq || candidate.hq === hq)){
+        ev = candidate;
         break;
       }
     }
@@ -2244,6 +2292,471 @@
     }
   ];
 
+  var QUESTIONS_STAGE18 = [
+    {
+      situation: "공항에 도착했어요. 제일 먼저 무엇을 해야 할까요?",
+      options: [
+        { text: "보호자의 손을 잡고 함께 다닌다", correct: true, label: "🤝 손잡고 함께 다니기" },
+        { text: "혼자 여기저기 구경하러 다닌다", correct: false, label: "🚶 혼자 구경하기" },
+        { text: "짐을 두고 뛰어다닌다", correct: false, label: "🏃 짐 두고 뛰기" }
+      ],
+      hint: "공항은 사람이 많고 넓어서 보호자와 떨어지면 위험해요. 항상 손을 잡고 다녀요."
+    },
+    {
+      situation: "보안검색대를 지날 때는 어떻게 해야 할까요?",
+      options: [
+        { text: "직원 안내에 따라 가방과 소지품을 검사대에 올려놓는다", correct: true, label: "🧳 안내에 따라 검사받기" },
+        { text: "줄을 서지 않고 먼저 지나간다", correct: false, label: "🙅 새치기하기" },
+        { text: "검사대를 장난감처럼 만지며 논다", correct: false, label: "😄 장난치며 놀기" }
+      ],
+      hint: "보안검색대는 모두의 안전을 위한 곳이에요. 직원 안내를 잘 따라야 해요."
+    },
+    {
+      situation: "공항에서 부모님이 안 보여요. 어떻게 해야 할까요?",
+      options: [
+        { text: "그 자리에 멈춰서 안내데스크나 직원에게 도움을 요청한다", correct: true, label: "🙋 직원에게 도움 요청" },
+        { text: "여기저기 뛰어다니며 혼자 찾는다", correct: false, label: "🏃 혼자 찾아다니기" },
+        { text: "아무 어른이나 따라간다", correct: false, label: "🚶 아무나 따라가기" }
+      ],
+      hint: "그 자리에 멈춰서 안내데스크나 유니폼을 입은 직원에게 도움을 요청하는 것이 가장 안전해요."
+    },
+    {
+      situation: "비행기를 타는 문(탑승구) 번호는 어떻게 확인할까요?",
+      options: [
+        { text: "전광판이나 탑승권에서 탑승구 번호와 시간을 확인한다", correct: true, label: "🛫 전광판·탑승권 확인" },
+        { text: "아무 문으로나 들어간다", correct: false, label: "🚪 아무 문이나 들어가기" },
+        { text: "확인하지 않고 기다린다", correct: false, label: "🙅 확인 안 하기" }
+      ],
+      hint: "전광판이나 탑승권에 적힌 탑승구 번호와 시간을 확인해야 제 시간에 탈 수 있어요."
+    },
+    {
+      situation: "공항에서 무빙워크나 에스컬레이터를 탈 때는요?",
+      options: [
+        { text: "손잡이를 잡고 안전선 안쪽에 선다", correct: true, label: "🖐️ 손잡이 잡고 서기" },
+        { text: "짐칸이나 가장자리에 걸터앉는다", correct: false, label: "🧳 가장자리에 앉기" },
+        { text: "뛰어서 오르내린다", correct: false, label: "🏃 뛰어서 타기" }
+      ],
+      hint: "손잡이를 잡고 안전선 안쪽에 서야 넘어지지 않아요."
+    },
+    {
+      situation: "여권이나 탑승권은 어떻게 보관하면 좋을까요?",
+      options: [
+        { text: "보호자가 챙기거나 정해진 가방 주머니에 넣어 잘 보관한다", correct: true, label: "🎫 정해진 곳에 보관" },
+        { text: "손에 들고 다니다 아무 데나 놔둔다", correct: false, label: "🤲 아무 데나 놓기" },
+        { text: "친구에게 맡기고 신경 쓰지 않는다", correct: false, label: "🙅 신경 안 쓰기" }
+      ],
+      hint: "여권과 탑승권은 아주 중요해요. 정해진 가방 주머니에 잘 보관해요."
+    },
+    {
+      situation: "비행기를 기다리는 시간에 어떻게 행동하면 좋을까요?",
+      options: [
+        { text: "대기 장소에서 얌전히 앉아 기다린다", correct: true, label: "🪑 얌전히 앉아 기다리기" },
+        { text: "복도를 이리저리 뛰어다닌다", correct: false, label: "🏃 복도에서 뛰기" },
+        { text: "다른 사람 짐을 함부로 만진다", correct: false, label: "🧳 남의 짐 만지기" }
+      ],
+      hint: "공항은 사람이 많은 곳이에요. 얌전히 앉아 기다리면 다치지 않고 안전해요."
+    },
+    {
+      situation: "짐 찾는 곳에서 내 캐리어를 찾을 때는요?",
+      options: [
+        { text: "짐에 붙은 이름표를 확인하고 내 것만 가져간다", correct: true, label: "🏷️ 이름표 확인하기" },
+        { text: "비슷하게 생긴 아무 캐리어나 가져간다", correct: false, label: "🧳 아무거나 가져가기" },
+        { text: "확인하지 않고 여러 개를 가져간다", correct: false, label: "🙅 확인 안 하기" }
+      ],
+      hint: "이름표를 꼭 확인해야 내 짐을 정확히 찾을 수 있어요."
+    },
+    {
+      situation: "모르는 사람이 '가방 좀 대신 들어줄래?'라고 부탁해요.",
+      options: [
+        { text: "정중히 거절하고 보호자에게 알린다", correct: true, label: "🙅 거절하고 알리기" },
+        { text: "친절하니까 그냥 들어준다", correct: false, label: "🎒 그냥 들어주기" },
+        { text: "혼자 판단해서 도와준다", correct: false, label: "🤔 혼자 판단하기" }
+      ],
+      hint: "낯선 사람의 짐을 대신 맡거나 들어주면 위험할 수 있어요. 꼭 보호자에게 알려요."
+    },
+    {
+      situation: "공항에서 안전하게 다니는 습관은 무엇일까요?",
+      options: [
+        { text: "보호자와 함께 다니고, 안내판과 직원 말을 잘 따른다", correct: true, label: "🤝 함께 다니고 안내 따르기" },
+        { text: "혼자 다니며 안내는 무시한다", correct: false, label: "🙅 안내 무시하기" },
+        { text: "위험해 보여도 신경 쓰지 않는다", correct: false, label: "😐 신경 안 쓰기" }
+      ],
+      hint: "보호자와 함께 다니고 안내를 잘 따르는 것이 공항에서 안전하게 지내는 방법이에요."
+    }
+  ];
+
+  var QUESTIONS_STAGE19 = [
+    {
+      situation: "비행기에 탑승하면 제일 먼저 해야 할 일은 무엇일까요?",
+      options: [
+        { text: "자리에 앉아 안전벨트를 맨다", correct: true, label: "🔒 안전벨트 매기" },
+        { text: "짐칸을 여기저기 열어본다", correct: false, label: "🧳 짐칸 열어보기" },
+        { text: "다른 자리로 옮겨 다닌다", correct: false, label: "🚶 자리 옮겨 다니기" }
+      ],
+      hint: "자리에 앉아 안전벨트를 매는 것이 비행기 탑승 후 가장 먼저 할 일이에요."
+    },
+    {
+      situation: "안전벨트 표시등이 켜지면 어떻게 해야 할까요?",
+      options: [
+        { text: "바로 자리에 앉아 안전벨트를 맨다", correct: true, label: "💺 자리에 앉아 벨트 매기" },
+        { text: "표시등을 무시하고 돌아다닌다", correct: false, label: "🙅 표시등 무시하기" },
+        { text: "화장실에 가려고 일어난다", correct: false, label: "🚻 화장실 가기" }
+      ],
+      hint: "표시등이 켜지면 흔들림이 있을 수 있으니 바로 앉아 안전벨트를 매야 해요."
+    },
+    {
+      situation: "비행기가 이륙하거나 착륙할 때는 어떻게 해야 할까요?",
+      options: [
+        { text: "안전벨트를 매고 좌석 등받이를 세운 채 앉아있는다", correct: true, label: "💺 벨트 매고 등받이 세우기" },
+        { text: "일어나서 짐칸에서 물건을 꺼낸다", correct: false, label: "🧳 짐칸 열기" },
+        { text: "통로를 돌아다니며 논다", correct: false, label: "🏃 통로에서 놀기" }
+      ],
+      hint: "이착륙 때는 흔들릴 수 있어서 안전벨트를 매고 자리에 앉아 있어야 해요."
+    },
+    {
+      situation: "비행 중 갑자기 산소마스크가 내려왔어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "승무원 안내에 따라 마스크를 코와 입에 쓴다", correct: true, label: "😷 마스크 쓰기" },
+        { text: "무서워서 마스크를 밀쳐낸다", correct: false, label: "🙅 마스크 밀쳐내기" },
+        { text: "옆 사람 것부터 씌워준다", correct: false, label: "🤝 남부터 씌우기" }
+      ],
+      hint: "승무원 안내에 따라 내 마스크를 먼저 쓰는 것이 중요해요."
+    },
+    {
+      situation: "비행기 통로를 뛰어다니고 싶어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "자리에 앉아 있고 통로에서 뛰지 않는다", correct: true, label: "💺 자리에 앉아있기" },
+        { text: "통로를 신나게 뛰어다닌다", correct: false, label: "🏃 통로 뛰어다니기" },
+        { text: "다른 승객 자리에 올라간다", correct: false, label: "🙅 남의 자리 올라가기" }
+      ],
+      hint: "비행 중에 뛰어다니면 넘어지거나 다칠 수 있어요. 자리에 앉아있어야 해요."
+    },
+    {
+      situation: "귀가 먹먹하고 아플 때는 어떻게 하면 좋을까요?",
+      options: [
+        { text: "침을 삼키거나 하품을 해서 귀 압력을 풀어준다", correct: true, label: "😮 침 삼키기·하품하기" },
+        { text: "귀를 세게 후벼판다", correct: false, label: "🙅 귀 세게 후비기" },
+        { text: "참고 아무것도 하지 않는다", correct: false, label: "😣 그냥 참기" }
+      ],
+      hint: "침을 삼키거나 하품을 하면 귀 안 압력이 풀려서 편해져요."
+    },
+    {
+      situation: "태블릿이나 게임기 같은 전자기기는 언제 사용할 수 있을까요?",
+      options: [
+        { text: "승무원 안내에 따라 비행기모드로 사용한다", correct: true, label: "📱 비행기모드로 사용" },
+        { text: "안내와 상관없이 아무 때나 사용한다", correct: false, label: "🙅 아무 때나 사용" },
+        { text: "이착륙 중에도 계속 사용한다", correct: false, label: "📱 이착륙 중 사용" }
+      ],
+      hint: "전자기기는 승무원 안내를 따라 비행기모드로 사용해야 안전해요."
+    },
+    {
+      situation: "구명조끼는 언제, 어떻게 사용해야 할까요?",
+      options: [
+        { text: "좌석 밑에 있는 것을 승무원 안내에 따라 착용한다", correct: true, label: "🦺 안내에 따라 착용" },
+        { text: "궁금해서 미리 꺼내 입고 논다", correct: false, label: "🙅 미리 꺼내 놀기" },
+        { text: "내 것을 다른 사람에게 준다", correct: false, label: "🤝 남에게 주기" }
+      ],
+      hint: "구명조끼는 승무원이 안내할 때만 정확한 방법으로 착용해야 해요."
+    },
+    {
+      situation: "옆자리 승객이 자고 있어요. 나는 어떻게 행동해야 할까요?",
+      options: [
+        { text: "조용히 이야기하고 소리 지르지 않는다", correct: true, label: "🤫 조용히 하기" },
+        { text: "큰 소리로 노래를 부른다", correct: false, label: "🎤 큰 소리로 노래하기" },
+        { text: "발로 앞좌석을 계속 찬다", correct: false, label: "🦵 좌석 발로 차기" }
+      ],
+      hint: "비행기 안에서는 다른 승객을 위해 조용히 행동해야 해요."
+    },
+    {
+      situation: "비행기 안에서 안전하게 지내는 습관은 무엇일까요?",
+      options: [
+        { text: "안전벨트를 매고 승무원 안내를 잘 따른다", correct: true, label: "🔒 벨트 매고 안내 따르기" },
+        { text: "안내를 무시하고 마음대로 행동한다", correct: false, label: "🙅 안내 무시하기" },
+        { text: "위험해 보여도 그냥 넘어간다", correct: false, label: "😐 그냥 넘어가기" }
+      ],
+      hint: "안전벨트를 매고 승무원 안내를 잘 따르는 것이 비행기 안전의 기본이에요."
+    }
+  ];
+
+  var QUESTIONS_STAGE20 = [
+    {
+      situation: "여행지에서 가족과 떨어질까 봐 미리 정해두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "혹시 헤어지면 만날 장소(집결지)를 미리 정해둔다", correct: true, label: "📍 만날 장소 미리 정하기" },
+        { text: "아무것도 정하지 않고 그냥 다닌다", correct: false, label: "🙅 아무것도 안 정하기" },
+        { text: "헤어지면 어떻게 할지 생각하지 않는다", correct: false, label: "😐 생각 안 하기" }
+      ],
+      hint: "미리 만날 장소를 정해두면 혹시 헤어져도 다시 만나기 쉬워요."
+    },
+    {
+      situation: "낯선 거리에서 길을 잃었어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "그 자리에 멈춰서 가게나 안내소의 어른에게 도움을 요청한다", correct: true, label: "🏪 안전한 곳에서 도움 요청" },
+        { text: "무작정 이곳저곳 뛰어다닌다", correct: false, label: "🏃 무작정 뛰어다니기" },
+        { text: "아무 골목으로나 들어간다", correct: false, label: "🚶 아무 골목 들어가기" }
+      ],
+      hint: "멈춰서 가게나 안내소처럼 안전한 곳의 어른에게 도움을 요청하는 것이 가장 안전해요."
+    },
+    {
+      situation: "모르는 사람이 길을 알려주겠다며 손을 잡아끌어요.",
+      options: [
+        { text: "손을 빼고 '괜찮아요'라고 말한 뒤 안전한 곳으로 간다", correct: true, label: "🙅 손 빼고 안전한 곳으로" },
+        { text: "따라가면 길을 알 수 있으니 따라간다", correct: false, label: "🚶 따라가기" },
+        { text: "아무 말 없이 가만히 있는다", correct: false, label: "😶 가만히 있기" }
+      ],
+      hint: "낯선 사람이 손을 잡아끌면 절대 따라가지 말고 안전한 곳으로 가야 해요."
+    },
+    {
+      situation: "여행 중 기억해두면 좋은 정보는 무엇일까요?",
+      options: [
+        { text: "숙소 이름과 부모님 전화번호를 외우거나 적어둔다", correct: true, label: "📝 숙소·연락처 기억하기" },
+        { text: "아무것도 기억하지 않아도 된다", correct: false, label: "🙅 기억 안 해도 됨" },
+        { text: "숙소 이름은 몰라도 된다", correct: false, label: "😐 몰라도 됨" }
+      ],
+      hint: "숙소 이름과 부모님 전화번호를 알아두면 길을 잃어도 도움을 받기 쉬워요."
+    },
+    {
+      situation: "길을 찾을 때 도움이 되는 것은 무엇일까요?",
+      options: [
+        { text: "지도 앱이나 안내판을 보호자와 함께 확인한다", correct: true, label: "🗺️ 지도·안내판 확인" },
+        { text: "아무나 붙잡고 무작정 물어본다", correct: false, label: "🙋 아무나 붙잡고 묻기" },
+        { text: "확인하지 않고 감으로 걷는다", correct: false, label: "🚶 감으로 걷기" }
+      ],
+      hint: "지도 앱이나 안내판을 보호자와 함께 확인하면 길을 안전하게 찾을 수 있어요."
+    },
+    {
+      situation: "단체로 여행할 때는 어떻게 이동해야 할까요?",
+      options: [
+        { text: "무리에서 떨어지지 않고 함께 이동한다", correct: true, label: "👨‍👩‍👧‍👦 무리와 함께 이동" },
+        { text: "혼자 앞서서 빨리 걸어간다", correct: false, label: "🏃 혼자 앞서가기" },
+        { text: "구경하다가 뒤처져도 신경 쓰지 않는다", correct: false, label: "😐 뒤처져도 신경 안 씀" }
+      ],
+      hint: "무리에서 떨어지지 않고 함께 이동해야 길을 잃지 않아요."
+    },
+    {
+      situation: "사진을 찍는다고 잠깐 멀어지고 싶어요.",
+      options: [
+        { text: "보호자에게 먼저 말하고 시야 안에서만 움직인다", correct: true, label: "🙋 말하고 시야 안에서" },
+        { text: "말없이 혼자 멀리 간다", correct: false, label: "🚶 말없이 멀리 가기" },
+        { text: "무리와 상관없이 오래 머문다", correct: false, label: "⏰ 오래 머물기" }
+      ],
+      hint: "잠깐이라도 보호자에게 먼저 말하고, 항상 눈에 보이는 곳에만 있어야 해요."
+    },
+    {
+      situation: "낯선 곳에서 도움을 요청할 때는 누구에게 가면 좋을까요?",
+      options: [
+        { text: "경찰관이나 안내소 직원, 아이 동반 가족을 찾는다", correct: true, label: "👮 경찰관·안내소 찾기" },
+        { text: "혼자 있는 낯선 어른에게 무조건 간다", correct: false, label: "🚶 낯선 어른에게 무조건" },
+        { text: "아무도 찾지 않고 혼자 해결한다", correct: false, label: "😐 혼자 해결하기" }
+      ],
+      hint: "경찰관이나 안내소 직원, 아이를 동반한 가족처럼 안전해 보이는 사람에게 도움을 요청해요."
+    },
+    {
+      situation: "여럿이 같이 다닐 때 서로 눈에 잘 띄게 하는 방법은 무엇일까요?",
+      options: [
+        { text: "같은 색 옷이나 모자를 맞춰 입어 서로 알아보기 쉽게 한다", correct: true, label: "🧢 같은 색 옷 맞추기" },
+        { text: "모두 다른 방향으로 흩어져 다닌다", correct: false, label: "🙅 흩어져 다니기" },
+        { text: "신경 쓰지 않고 아무렇게나 다닌다", correct: false, label: "😐 신경 안 쓰기" }
+      ],
+      hint: "같은 색 옷이나 모자를 맞추면 사람 많은 곳에서도 서로 쉽게 찾을 수 있어요."
+    },
+    {
+      situation: "낯선 곳에서 안전하게 다니는 습관은 무엇일까요?",
+      options: [
+        { text: "보호자와 함께 다니고, 헤어지면 정해진 장소에서 기다린다", correct: true, label: "🤝 함께 다니고 정한 곳서 기다리기" },
+        { text: "혼자 다니다 헤어지면 아무 데서나 기다린다", correct: false, label: "🙅 아무 데서나 기다리기" },
+        { text: "낯선 사람 도움을 무조건 따른다", correct: false, label: "🚶 낯선 사람 무조건 따르기" }
+      ],
+      hint: "보호자와 함께 다니고, 혹시 헤어지면 미리 정한 장소에서 기다리는 것이 가장 안전해요."
+    }
+  ];
+
+  var QUESTIONS_STAGE21 = [
+    {
+      situation: "숙소에 도착하면 미리 확인해두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "비상구 위치와 대피 안내도를 확인한다", correct: true, label: "🚪 비상구·대피 안내도 확인" },
+        { text: "확인하지 않고 바로 논다", correct: false, label: "🙅 확인 안 하고 놀기" },
+        { text: "짐 정리만 하고 신경 쓰지 않는다", correct: false, label: "🧳 짐 정리만 하기" }
+      ],
+      hint: "숙소에 도착하면 비상구 위치와 대피 안내도를 미리 확인해두면 위급할 때 도움이 돼요."
+    },
+    {
+      situation: "누군가 방문을 두드리며 들어오려고 해요. 어떻게 해야 할까요?",
+      options: [
+        { text: "문을 열지 않고 보호자에게 먼저 확인한다", correct: true, label: "🚪 안 열고 보호자 확인" },
+        { text: "누군지 모르지만 바로 문을 열어준다", correct: false, label: "🙅 바로 열어주기" },
+        { text: "혼자 판단해서 문을 열어준다", correct: false, label: "🤔 혼자 판단하기" }
+      ],
+      hint: "모르는 사람이 문을 두드리면 절대 혼자 열지 말고 보호자에게 먼저 확인해야 해요."
+    },
+    {
+      situation: "숙소 발코니나 창문에서는 어떻게 행동해야 할까요?",
+      options: [
+        { text: "혼자 열고 나가거나 매달리지 않는다", correct: true, label: "🙅 혼자 나가지 않기" },
+        { text: "혼자 열고 밖을 구경한다", correct: false, label: "🪟 혼자 열고 구경하기" },
+        { text: "난간에 올라가서 논다", correct: false, label: "🚸 난간에 올라가기" }
+      ],
+      hint: "발코니나 창문은 혼자 열거나 매달리면 떨어질 위험이 있어 아주 위험해요."
+    },
+    {
+      situation: "숙소 안에서 화재경보음이 울렸어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "계단으로 침착하게 대피하고 엘리베이터는 타지 않는다", correct: true, label: "🪜 계단으로 침착하게 대피" },
+        { text: "엘리베이터를 타고 빨리 내려간다", correct: false, label: "🛗 엘리베이터 타기" },
+        { text: "짐을 다 챙긴 뒤에 나간다", correct: false, label: "🧳 짐부터 챙기기" }
+      ],
+      hint: "화재 때는 엘리베이터가 멈출 수 있어서 반드시 계단으로 대피해야 해요."
+    },
+    {
+      situation: "전기포트나 뜨거운 물이 있어요. 어떻게 사용해야 할까요?",
+      options: [
+        { text: "혼자 만지지 않고 보호자와 함께 사용한다", correct: true, label: "🫖 보호자와 함께 사용" },
+        { text: "혼자 만지며 궁금한 대로 사용한다", correct: false, label: "🙅 혼자 만지기" },
+        { text: "뜨거운지 확인하려고 손을 넣어본다", correct: false, label: "🔥 손 넣어 확인하기" }
+      ],
+      hint: "전기포트와 뜨거운 물은 화상 위험이 있어서 꼭 보호자와 함께 사용해야 해요."
+    },
+    {
+      situation: "숙소 밖으로 혼자 나가고 싶어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "보호자 없이 혼자 나가지 않는다", correct: true, label: "🙅 혼자 나가지 않기" },
+        { text: "몰래 혼자 나갔다 온다", correct: false, label: "🚶 몰래 혼자 나가기" },
+        { text: "친구랑 둘이서만 나간다", correct: false, label: "👫 친구랑만 나가기" }
+      ],
+      hint: "낯선 숙소 밖은 위험할 수 있으니 보호자와 함께 나가야 해요."
+    },
+    {
+      situation: "방 열쇠나 카드키는 어떻게 관리하면 좋을까요?",
+      options: [
+        { text: "잃어버리지 않게 정해진 곳에 잘 보관한다", correct: true, label: "🔑 정해진 곳에 보관" },
+        { text: "아무 데나 놔두고 신경 쓰지 않는다", correct: false, label: "🙅 아무 데나 놓기" },
+        { text: "모르는 사람에게 맡긴다", correct: false, label: "🤝 남에게 맡기기" }
+      ],
+      hint: "열쇠나 카드키를 잃어버리면 곤란해지니 정해진 곳에 잘 보관해야 해요."
+    },
+    {
+      situation: "숙소 수영장에서 놀고 싶어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "보호자와 함께, 안전 규칙을 지키며 논다", correct: true, label: "🏊 보호자와 규칙 지키며 놀기" },
+        { text: "보호자 없이 혼자 물놀이를 한다", correct: false, label: "🙅 혼자 물놀이하기" },
+        { text: "안전 규칙을 무시하고 마음대로 논다", correct: false, label: "😄 규칙 무시하고 놀기" }
+      ],
+      hint: "수영장은 보호자와 함께, 안전 규칙을 지키며 놀아야 안전해요."
+    },
+    {
+      situation: "숙소에서 자다가 무서운 소리가 나면 어떻게 해야 할까요?",
+      options: [
+        { text: "보호자를 깨우거나 프런트에 도움을 요청한다", correct: true, label: "🙋 보호자 깨우기·프런트 요청" },
+        { text: "혼자 소리 나는 곳을 확인하러 나간다", correct: false, label: "🚶 혼자 확인하러 가기" },
+        { text: "무서워도 아무에게도 말하지 않는다", correct: false, label: "😶 말하지 않기" }
+      ],
+      hint: "무서운 소리가 나면 혼자 확인하지 말고 보호자를 깨우거나 프런트에 알려야 해요."
+    },
+    {
+      situation: "숙소에서 안전하게 지내는 습관은 무엇일까요?",
+      options: [
+        { text: "도착하면 비상구를 확인하고, 문단속을 잘 지킨다", correct: true, label: "🚪 비상구 확인·문단속" },
+        { text: "비상구는 확인하지 않아도 된다", correct: false, label: "🙅 확인 안 해도 됨" },
+        { text: "문단속은 신경 쓰지 않는다", correct: false, label: "😐 문단속 신경 안 씀" }
+      ],
+      hint: "도착 후 비상구를 확인하고 문단속을 잘 지키는 습관이 숙소 안전의 기본이에요."
+    }
+  ];
+
+  var QUESTIONS_STAGE22 = [
+    {
+      situation: "여행 중 배가 아프거나 열이 나요. 어떻게 해야 할까요?",
+      options: [
+        { text: "보호자에게 바로 말하고 도움을 요청한다", correct: true, label: "🙋 보호자에게 바로 말하기" },
+        { text: "참고 아무 말도 하지 않는다", correct: false, label: "😣 참고 말 안 하기" },
+        { text: "나아질 때까지 혼자 견딘다", correct: false, label: "😐 혼자 견디기" }
+      ],
+      hint: "몸이 아프면 참지 말고 바로 보호자에게 말해야 빨리 도움을 받을 수 있어요."
+    },
+    {
+      situation: "여권이나 중요한 서류를 잃어버렸어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "당황하지 않고 보호자나 안내소에 알린다", correct: true, label: "🙋 보호자·안내소에 알리기" },
+        { text: "혼자 찾으러 이곳저곳 뛰어다닌다", correct: false, label: "🏃 혼자 찾아다니기" },
+        { text: "아무에게도 말하지 않고 넘어간다", correct: false, label: "😶 말하지 않기" }
+      ],
+      hint: "중요한 서류를 잃어버리면 당황하지 말고 바로 보호자나 안내소에 알려야 해요."
+    },
+    {
+      situation: "낯선 나라에서 위급한 상황이 생기면 어떻게 해야 할까요?",
+      options: [
+        { text: "그 나라의 긴급 전화번호나 안내소를 이용한다", correct: true, label: "☎️ 긴급 전화·안내소 이용" },
+        { text: "혼자 알아서 해결하려고 한다", correct: false, label: "😐 혼자 해결하기" },
+        { text: "아무 도움도 요청하지 않는다", correct: false, label: "🙅 도움 요청 안 하기" }
+      ],
+      hint: "낯선 나라에서도 긴급 전화번호나 안내소에 도움을 요청할 수 있어요."
+    },
+    {
+      situation: "맡긴 짐(캐리어)이 없어졌어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "항공사나 담당 직원에게 바로 알린다", correct: true, label: "🙋 담당 직원에게 알리기" },
+        { text: "그냥 포기하고 아무 말도 하지 않는다", correct: false, label: "😶 포기하고 말 안 하기" },
+        { text: "다른 사람 짐을 대신 가져간다", correct: false, label: "🧳 남의 짐 가져가기" }
+      ],
+      hint: "짐이 없어지면 바로 항공사나 담당 직원에게 알려야 찾을 수 있어요."
+    },
+    {
+      situation: "차나 배를 타고 가는데 멀미가 날 것 같아요. 어떻게 해야 할까요?",
+      options: [
+        { text: "창밖을 보거나 편한 자세로 앉아 보호자에게 알린다", correct: true, label: "🚗 창밖 보고 보호자에게 알리기" },
+        { text: "책이나 스마트폰을 계속 들여다본다", correct: false, label: "📱 계속 들여다보기" },
+        { text: "참고 아무에게도 말하지 않는다", correct: false, label: "😣 참고 말 안 하기" }
+      ],
+      hint: "멀미가 날 것 같으면 창밖을 보며 편하게 앉고, 보호자에게 알려야 해요."
+    },
+    {
+      situation: "여행 중 넘어져서 다쳤어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "무리하게 움직이지 않고 보호자나 주변 어른에게 알린다", correct: true, label: "🙋 움직이지 않고 알리기" },
+        { text: "괜찮은 척하며 계속 논다", correct: false, label: "😐 괜찮은 척하기" },
+        { text: "혼자 일어나 무리해서 걷는다", correct: false, label: "🚶 무리해서 걷기" }
+      ],
+      hint: "다쳤을 때는 무리하게 움직이지 말고 보호자나 주변 어른에게 바로 알려야 해요."
+    },
+    {
+      situation: "낯선 음식을 먹고 속이 안 좋아요. 어떻게 해야 할까요?",
+      options: [
+        { text: "무리해서 더 먹지 않고 어른에게 말한다", correct: true, label: "🙋 그만 먹고 어른에게 말하기" },
+        { text: "괜찮아질 때까지 계속 먹는다", correct: false, label: "🍽️ 계속 먹기" },
+        { text: "아무 말 없이 참는다", correct: false, label: "😣 참고 말 안 하기" }
+      ],
+      hint: "속이 안 좋으면 더 먹지 말고 어른에게 바로 말해야 해요."
+    },
+    {
+      situation: "여행을 떠나기 전 위급 상황을 대비해 미리 챙기면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "상비약과 비상 연락처를 챙긴다", correct: true, label: "💊 상비약·연락처 챙기기" },
+        { text: "아무것도 챙기지 않아도 된다", correct: false, label: "🙅 안 챙겨도 됨" },
+        { text: "장난감만 잔뜩 챙긴다", correct: false, label: "🧸 장난감만 챙기기" }
+      ],
+      hint: "상비약과 비상 연락처를 미리 챙기면 위급한 상황에서 빠르게 대처할 수 있어요."
+    },
+    {
+      situation: "여행 중 갑자기 길에서 어지럽거나 힘들어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "그늘이나 안전한 곳에 앉아 어른에게 도움을 요청한다", correct: true, label: "🌳 그늘에 앉아 도움 요청" },
+        { text: "괜찮다고 생각하고 계속 걷는다", correct: false, label: "🚶 계속 걷기" },
+        { text: "아무에게도 말하지 않고 혼자 버틴다", correct: false, label: "😶 혼자 버티기" }
+      ],
+      hint: "어지럽거나 힘들면 안전한 곳에 앉아서 쉬고, 어른에게 도움을 요청해야 해요."
+    },
+    {
+      situation: "여행 중 응급 상황이 생겼을 때 가장 중요한 대처 습관은 무엇일까요?",
+      options: [
+        { text: "당황하지 않고 침착하게 보호자나 어른에게 알린다", correct: true, label: "🙋 침착하게 어른에게 알리기" },
+        { text: "혼자 해결하려고 애쓴다", correct: false, label: "😐 혼자 해결하려 애쓰기" },
+        { text: "무서워서 아무것도 하지 않는다", correct: false, label: "😶 아무것도 안 하기" }
+      ],
+      hint: "응급 상황에서는 당황하지 않고 침착하게 보호자나 주변 어른에게 알리는 것이 가장 중요해요."
+    }
+  ];
+
   var STAGES = [
     {
       key: "stage1",
@@ -2399,15 +2912,61 @@
       shortTitle: "사람 많은 곳! 다중이용시설 화재대피 훈련",
       desc: "백화점·영화관 같은 곳에서 안전하게 대피하는 법을 배워요",
       questions: QUESTIONS_STAGE17
+    },
+    {
+      key: "stage18",
+      hq: "travel",
+      emoji: "🛫",
+      mapTitle: "18화 · 붕붕! 공항 안전 훈련",
+      shortTitle: "붕붕! 공항 안전 훈련",
+      desc: "공항에서 안전하게 다니고 부모님과 떨어지지 않는 법을 배워요",
+      questions: QUESTIONS_STAGE18
+    },
+    {
+      key: "stage19",
+      hq: "travel",
+      emoji: "✈️",
+      mapTitle: "19화 · 슝~! 비행기 안전 훈련",
+      shortTitle: "슝~! 비행기 안전 훈련",
+      desc: "비행기 안에서 안전벨트를 매고 안내를 따르는 법을 배워요",
+      questions: QUESTIONS_STAGE19
+    },
+    {
+      key: "stage20",
+      hq: "travel",
+      emoji: "🗺️",
+      mapTitle: "20화 · 두리번두리번! 낯선 곳 길찾기 훈련",
+      shortTitle: "두리번두리번! 낯선 곳 길찾기 훈련",
+      desc: "낯선 곳에서 길을 잃지 않고 도움을 요청하는 법을 배워요",
+      questions: QUESTIONS_STAGE20
+    },
+    {
+      key: "stage21",
+      hq: "travel",
+      emoji: "🏨",
+      mapTitle: "21화 · 콕콕! 숙소 안전 훈련",
+      shortTitle: "콕콕! 숙소 안전 훈련",
+      desc: "숙소에서 문단속과 비상구를 확인하는 법을 배워요",
+      questions: QUESTIONS_STAGE21
+    },
+    {
+      key: "stage22",
+      hq: "travel",
+      emoji: "🩹",
+      mapTitle: "22화 · 아이코! 여행 응급상황 훈련",
+      shortTitle: "아이코! 여행 응급상황 훈련",
+      desc: "여행 중 아프거나 다쳤을 때 침착하게 대처하는 법을 배워요",
+      questions: QUESTIONS_STAGE22
     }
   ];
 
   var HQ_INFO = {
     fire: { emoji: "🚒", name: "소방 안전본부", subtitle: "불과 연기, 재난 상황에서 침착하게 행동하는 법을 배워보자." },
     police: { emoji: "🚓", name: "경찰 안전본부", subtitle: "교통안전, 사이버 안전, 낯선 사람 대처법을 배우는 미션이야." },
-    medical: { emoji: "🚑", name: "구급 안전본부", subtitle: "물놀이 안전과 다친 친구를 돕는 법을 배우는 미션이야." }
+    medical: { emoji: "🚑", name: "구급 안전본부", subtitle: "물놀이 안전과 다친 친구를 돕는 법을 배우는 미션이야." },
+    travel: { emoji: "🧳", name: "여행 안전본부", subtitle: "공항, 비행기, 낯선 곳에서도 안전하게 다니는 법을 배우는 미션이야." }
   };
-  var HQ_ORDER = ["fire", "police", "medical"];
+  var HQ_ORDER = ["fire", "police", "medical", "travel"];
 
   function stagesForHq(hqId){
     var indices = [];
@@ -2419,6 +2978,7 @@
 
   var STEP_UP = 3;
   var CALM_STEP = 10;
+  var SURPRISE_AT_QINDEX = 6;
   var STORAGE_KEY = "lha_progress";
 
   var state = {
@@ -2620,11 +3180,12 @@
     state.firstTryCorrect = 0;
     state.triedThisQuestion = false;
     state.correctCount = 0;
+    state.surpriseShown = false;
     $("battle-stage-title").textContent = stage.emoji + " " + stage.shortTitle;
     $("situation-emoji").textContent = stage.emoji;
     refreshBattleAvatar();
     showScreen("screen-battle");
-    triggerStoryEvent("before_first_question", renderQuestion);
+    triggerStoryEvent("before_first_question", stage.hq, renderQuestion);
   }
 
   function refreshBattleAvatar(){
@@ -2712,9 +3273,12 @@
       setTimeout(function(){
         state.qIndex++;
         if(state.qIndex >= state.total){
-          triggerStoryEvent("before_clear", finishStage);
+          triggerStoryEvent("before_clear", STAGES[state.stageIndex].hq, finishStage);
         } else if(state.correctCount === 3){
-          triggerStoryEvent("after_correct_3", renderQuestion);
+          triggerStoryEvent("after_correct_3", STAGES[state.stageIndex].hq, renderQuestion);
+        } else if(state.qIndex === SURPRISE_AT_QINDEX && !state.surpriseShown){
+          state.surpriseShown = true;
+          triggerSurpriseEvent(STAGES[state.stageIndex].hq, renderQuestion);
         } else {
           renderQuestion();
         }
@@ -2876,6 +3440,7 @@
   $("btn-event-continue").addEventListener("click", function(){
     var cb = pendingEventContinue;
     pendingEventContinue = null;
+    $("screen-event").classList.remove("screen-event-alert");
     showScreen("screen-battle");
     if(cb) cb();
   });
