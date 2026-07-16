@@ -384,96 +384,17 @@
       <p class="subtitle">어느 안전본부의 미션을 시작할까?</p>
     </div>
     <div class="player-chip" id="hq-player-chip"></div>
-    <div class="stage-list">
-      <div class="stage-card unlocked" id="hq-fire-card">
-        <div class="stage-emoji">🚒</div>
-        <div class="stage-info">
-          <div class="stage-title">소방 안전본부</div>
-          <div class="stage-desc">불과 연기, 재난 상황에서 침착하게 행동하는 법을 배워보자.</div>
-        </div>
-      </div>
-      <div class="stage-card locked" id="hq-police-card">
-        <div class="stage-emoji">🚓</div>
-        <div class="stage-info">
-          <div class="stage-title">경찰 안전본부</div>
-          <div class="stage-desc">낯선 사람, 길 잃음, 교통안전을 배우는 미션이 곧 열려요.</div>
-        </div>
-      </div>
-      <div class="stage-card locked" id="hq-medical-card">
-        <div class="stage-emoji">🚑</div>
-        <div class="stage-info">
-          <div class="stage-title">구급 안전본부</div>
-          <div class="stage-desc">다친 친구를 돕고 119에 신고하는 법을 배우는 미션이 곧 열려요.</div>
-        </div>
-      </div>
-    </div>
+    <div class="stage-list" id="hq-list"></div>
     <button class="btn btn-ghost" id="btn-hq-back">메인으로</button>
   </section>
 
-  <!-- 사건 지도 -->
+  <!-- 사건 지도 (본부별) -->
   <section class="screen" id="screen-map">
     <div class="map-header">
-      <h1 style="font-size:1.3rem;">🗺️ 사건 지도</h1>
-      <p class="subtitle">소방 안전본부에서 출동할 사건을 골라주세요</p>
+      <h1 style="font-size:1.3rem;" id="map-hq-heading">🗺️ 사건 지도</h1>
+      <p class="subtitle" id="map-hq-subtitle">출동할 사건을 골라주세요</p>
     </div>
-    <div class="stage-list">
-      <div class="stage-card" id="stage-1-card">
-        <div class="stage-emoji" id="stage-1-emoji">🔥</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-1-title">1화 · 불이야! 소방 출동 훈련</div>
-          <div class="stage-desc" id="stage-1-desc">불이 난 상황에서 안전하게 대피해요</div>
-          <div class="stage-stars" id="stage-1-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-2-card">
-        <div class="stage-emoji" id="stage-2-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-2-title">2화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-2-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-2-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-3-card">
-        <div class="stage-emoji" id="stage-3-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-3-title">3화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-3-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-3-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-4-card">
-        <div class="stage-emoji" id="stage-4-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-4-title">4화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-4-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-4-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-5-card">
-        <div class="stage-emoji" id="stage-5-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-5-title">5화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-5-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-5-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-6-card">
-        <div class="stage-emoji" id="stage-6-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-6-title">6화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-6-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-6-stars">☆☆☆</div>
-        </div>
-      </div>
-      <div class="stage-card" id="stage-7-card">
-        <div class="stage-emoji" id="stage-7-emoji">🔒</div>
-        <div class="stage-info">
-          <div class="stage-title" id="stage-7-title">7화 · 잠겨있어요</div>
-          <div class="stage-desc" id="stage-7-desc">이전 이야기를 클리어하면 열려요</div>
-          <div class="stage-stars" id="stage-7-stars">☆☆☆</div>
-        </div>
-      </div>
-    </div>
+    <div class="stage-list" id="stage-list"></div>
     <button class="btn btn-ghost" id="btn-map-back">본부 목록으로</button>
   </section>
 
@@ -1393,9 +1314,940 @@
     }
   ];
 
+  var QUESTIONS_STAGE8 = [
+    {
+      situation: "친구가 나를 자꾸 놀리고 별명을 불러서 속상해요.",
+      options: [
+        { text: "싫다고 분명하게 말하고, 계속되면 선생님께 알린다", correct: true, label: "🙅 싫다고 말하고 알리기" },
+        { text: "나도 똑같이 놀린다", correct: false, label: "😠 똑같이 놀리기" },
+        { text: "아무 말 없이 계속 참는다", correct: false, label: "🤐 계속 참기" }
+      ],
+      hint: "속상한 마음을 표현하고, 계속되면 꼭 선생님이나 부모님께 알려야 해요."
+    },
+    {
+      situation: "반 친구가 다른 친구를 자꾸 때리는 걸 봤어요.",
+      options: [
+        { text: "선생님께 바로 알린다", correct: true, label: "🙋 선생님께 알리기" },
+        { text: "못 본 척하고 지나간다", correct: false, label: "🙈 못 본 척하기" },
+        { text: "나도 같이 낄까 고민한다", correct: false, label: "🤔 같이 낄까 고민" }
+      ],
+      hint: "친구가 맞는 걸 보면 바로 어른에게 알려야 그 친구를 도울 수 있어요."
+    },
+    {
+      situation: "친구들이 한 친구만 따돌리고 같이 안 놀아줘요.",
+      options: [
+        { text: "선생님께 알리고, 따돌림당하는 친구에게 다가가 준다", correct: true, label: "🤝 알리고 다가가기" },
+        { text: "나도 같이 따돌린다", correct: false, label: "🙅 같이 따돌리기" },
+        { text: "신경 쓰지 않고 넘어간다", correct: false, label: "🤷 신경 안 쓰기" }
+      ],
+      hint: "따돌림은 혼자 두면 안 돼요. 어른에게 알리고 먼저 다가가 주는 게 좋아요."
+    },
+    {
+      situation: "누군가 메신저에서 나에 대해 나쁜 말을 퍼뜨려요.",
+      options: [
+        { text: "화면을 저장해두고 부모님이나 선생님께 알린다", correct: true, label: "🙋 저장 후 알리기" },
+        { text: "나도 똑같이 나쁜 말로 되받아친다", correct: false, label: "😠 똑같이 되받아치기" },
+        { text: "혼자 끙끙 앓는다", correct: false, label: "😢 혼자 끙끙 앓기" }
+      ],
+      hint: "증거를 남겨두고 어른에게 알리는 게 가장 확실한 해결 방법이에요."
+    },
+    {
+      situation: "친구가 내 물건을 자꾸 허락 없이 가져가요.",
+      options: [
+        { text: "\"돌려줘\"라고 분명하게 말하고, 안 되면 어른에게 알린다", correct: true, label: "🙅 분명하게 말하기" },
+        { text: "화가 나서 친구를 밀친다", correct: false, label: "😠 친구 밀치기" },
+        { text: "아무 말 없이 넘어간다", correct: false, label: "🤐 그냥 넘어가기" }
+      ],
+      hint: "속상해도 힘으로 해결하지 말고, 분명하게 말하거나 어른에게 알려야 해요."
+    },
+    {
+      situation: "나보다 힘이 센 친구가 협박하듯 말해서 무서워요.",
+      options: [
+        { text: "무서워도 부모님이나 선생님께 꼭 이야기한다", correct: true, label: "🙋 꼭 이야기하기" },
+        { text: "무서워서 아무에게도 말하지 않는다", correct: false, label: "🤐 말하지 않기" },
+        { text: "혼자 몰래 참는다", correct: false, label: "😢 혼자 참기" }
+      ],
+      hint: "무서운 일일수록 혼자 참지 말고 어른에게 꼭 알려야 도움을 받을 수 있어요."
+    },
+    {
+      situation: "친구를 놀리는 게 장난인지 괴롭힘인지 헷갈려요. 어떻게 구별할까요?",
+      options: [
+        { text: "상대방이 싫어하고 속상해하면 그건 괴롭힘이다", correct: true, label: "🙅 상대 마음 살피기" },
+        { text: "다들 웃으면 장난이니까 괜찮다", correct: false, label: "😄 다들 웃으면 괜찮기" },
+        { text: "내가 재미있으면 괜찮다", correct: false, label: "😆 내가 재밌으면 괜찮기" }
+      ],
+      hint: "내 기준이 아니라 상대방이 어떻게 느끼는지가 장난과 괴롭힘을 가르는 기준이에요."
+    },
+    {
+      situation: "학교폭력을 당하고 있는 친구를 도와주고 싶어요.",
+      options: [
+        { text: "그 친구 편에서 같이 선생님께 알려준다", correct: true, label: "🤝 같이 알려주기" },
+        { text: "괜히 엮일까봐 모른 척한다", correct: false, label: "🙈 모른 척하기" },
+        { text: "나중에 알아서 해결하겠지 생각한다", correct: false, label: "🤷 나중에 해결되겠지" }
+      ],
+      hint: "친구를 위해 함께 어른에게 알려주는 것만으로도 큰 도움이 돼요."
+    },
+    {
+      situation: "억울하게 오해를 받아서 친구들이 나를 멀리해요.",
+      options: [
+        { text: "속상한 마음을 어른에게 이야기하고 도움을 요청한다", correct: true, label: "🙋 어른께 이야기하기" },
+        { text: "화가 나서 친구들에게 소리 지른다", correct: false, label: "😠 소리 지르기" },
+        { text: "혼자 방에서 운다", correct: false, label: "😢 혼자 울기" }
+      ],
+      hint: "억울한 마음도 혼자 참지 말고 어른과 이야기하면 오해를 풀 수 있어요."
+    },
+    {
+      situation: "학교폭력을 예방하기 위해 평소에 할 수 있는 행동은 무엇일까요?",
+      options: [
+        { text: "친구가 힘들어 보이면 먼저 말을 걸어주고, 어려운 일은 어른과 상의한다", correct: true, label: "🤝 먼저 말 걸고 상의하기" },
+        { text: "힘이 센 친구 편에 서서 어울린다", correct: false, label: "🙅 힘센 친구 편들기" },
+        { text: "나와 상관없는 일은 신경 쓰지 않는다", correct: false, label: "🤷 상관없다고 넘기기" }
+      ],
+      hint: "친구를 먼저 살피고, 어려운 일은 어른과 상의하는 습관이 폭력을 예방해요."
+    }
+  ];
+
+  var QUESTIONS_STAGE9 = [
+    {
+      situation: "길에서 낯선 사람이 나를 붙잡으려고 해요. 어떻게 도움을 요청해야 할까요?",
+      options: [
+        { text: "큰 소리로 도와달라고 외치고 112에 신고한다", correct: true, label: "📢 외치고 112 신고" },
+        { text: "조용히 참는다", correct: false, label: "🤐 조용히 참기" },
+        { text: "혼자 해결하려고 한다", correct: false, label: "🙅 혼자 해결하기" }
+      ],
+      hint: "큰 소리로 알리고 112에 신고해야 빠르게 도움을 받을 수 있어요."
+    },
+    {
+      situation: "112에 신고할 때 제일 먼저 말해야 하는 것은 무엇일까요?",
+      options: [
+        { text: "지금 있는 장소(위치)를 정확히 말한다", correct: true, label: "📍 위치부터 말하기" },
+        { text: "이름부터 길게 설명한다", correct: false, label: "🙋 이름부터 설명하기" },
+        { text: "아무 말 없이 끊는다", correct: false, label: "📵 그냥 끊기" }
+      ],
+      hint: "위치를 정확히 알려줘야 경찰관이 빨리 찾아올 수 있어요."
+    },
+    {
+      situation: "놀이터에서 친구가 다쳐서 못 움직여요. 신고할 때 알려야 할 것은?",
+      options: [
+        { text: "다친 곳과 상황을 침착하게 설명한다", correct: true, label: "🗣️ 침착하게 설명하기" },
+        { text: "놀라서 전화를 끊어버린다", correct: false, label: "📵 전화 끊기" },
+        { text: "상황 설명 없이 빨리 오라고만 한다", correct: false, label: "🏃 빨리 오라고만 하기" }
+      ],
+      hint: "다친 상황을 정확히 설명해야 알맞은 도움을 빨리 받을 수 있어요."
+    },
+    {
+      situation: "밤에 집에 혼자 있는데 누군가 문을 계속 두드려요.",
+      options: [
+        { text: "문을 열지 않고 112에 신고한다", correct: true, label: "🔒 문 안 열고 신고" },
+        { text: "무서워도 문을 열어본다", correct: false, label: "🚪 문 열어보기" },
+        { text: "조용히 숨어서 아무것도 안 한다", correct: false, label: "🙈 숨어서 아무것도 안 하기" }
+      ],
+      hint: "낯선 사람이 문을 두드리면 절대 열지 말고 바로 신고해야 해요."
+    },
+    {
+      situation: "112에 장난 전화를 걸면 어떻게 될까요?",
+      options: [
+        { text: "진짜 도움이 필요한 사람이 도움을 못 받을 수 있어 절대 하면 안 된다", correct: true, label: "🙅 장난전화 하면 안 됨" },
+        { text: "장난이니까 괜찮다", correct: false, label: "😄 장난이니 괜찮기" },
+        { text: "심심할 때 걸어도 된다", correct: false, label: "📞 심심할 때 걸기" }
+      ],
+      hint: "장난 전화 때문에 정말 위험한 사람이 도움을 못 받을 수 있어요."
+    },
+    {
+      situation: "신고 전화 중 경찰관이 질문을 해요. 어떻게 대답해야 할까요?",
+      options: [
+        { text: "침착하게 사실대로 또박또박 대답한다", correct: true, label: "🗣️ 침착하게 대답하기" },
+        { text: "무서워서 아무 말도 안 한다", correct: false, label: "🤐 아무 말 안 하기" },
+        { text: "대충 얼버무린다", correct: false, label: "😵 대충 얼버무리기" }
+      ],
+      hint: "침착하게 사실대로 대답해야 경찰관이 정확히 도와줄 수 있어요."
+    },
+    {
+      situation: "112 말고 불이 났을 때 신고하는 번호는 무엇일까요?",
+      options: [
+        { text: "119", correct: true, label: "🚒 119" },
+        { text: "110", correct: false, label: "☎️ 110" },
+        { text: "114", correct: false, label: "📞 114" }
+      ],
+      hint: "불이 나거나 위급한 사고가 났을 땐 119에 신고해요."
+    },
+    {
+      situation: "친구가 물에 빠졌어요. 신고와 함께 무엇을 해야 할까요?",
+      options: [
+        { text: "신고하면서 주변 어른에게도 큰 소리로 알린다", correct: true, label: "📢 신고하며 어른께 알리기" },
+        { text: "혼자 조용히 구하러 뛰어든다", correct: false, label: "🏊 혼자 뛰어들기" },
+        { text: "신고만 하고 아무에게도 안 알린다", correct: false, label: "📵 신고만 하기" }
+      ],
+      hint: "신고와 동시에 주변 어른에게도 알려야 더 빨리 구할 수 있어요."
+    },
+    {
+      situation: "신고 전화를 걸고 나서 해야 할 행동은 무엇일까요?",
+      options: [
+        { text: "전화를 끊지 않고 안내에 따라 기다린다", correct: true, label: "📞 안내 따라 기다리기" },
+        { text: "말하자마자 바로 끊는다", correct: false, label: "📵 바로 끊기" },
+        { text: "신고 후 그 자리를 떠난다", correct: false, label: "🚶 자리 떠나기" }
+      ],
+      hint: "전화를 끊지 않고 기다려야 정확한 안내를 받을 수 있어요."
+    },
+    {
+      situation: "평소에 112 신고를 잘 하기 위해 미리 알아두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "우리 집 주소와 자주 가는 곳의 위치를 기억해둔다", correct: true, label: "📍 주소·위치 기억하기" },
+        { text: "몰라도 그때 가서 생각하면 된다", correct: false, label: "🤷 그때 가서 생각하기" },
+        { text: "신고 방법은 몰라도 상관없다", correct: false, label: "🙅 몰라도 상관없기" }
+      ],
+      hint: "평소에 주소와 위치를 알아두면 위급할 때 훨씬 빠르게 도움을 받을 수 있어요."
+    }
+  ];
+
+  var QUESTIONS_STAGE10 = [
+    {
+      situation: "자전거를 타기 전에 꼭 착용해야 하는 안전장비는 무엇일까요?",
+      options: [
+        { text: "헬멧을 쓴다", correct: true, label: "⛑️ 헬멧 쓰기" },
+        { text: "헬멧 없이 모자만 쓴다", correct: false, label: "🧢 모자만 쓰기" },
+        { text: "아무것도 안 써도 된다", correct: false, label: "🙅 아무것도 안 쓰기" }
+      ],
+      hint: "헬멧은 넘어졌을 때 머리를 지켜주는 가장 중요한 장비예요."
+    },
+    {
+      situation: "킥보드나 자전거는 어디로 다녀야 할까요?",
+      options: [
+        { text: "자전거 도로나 정해진 안전한 곳으로 다닌다", correct: true, label: "🛣️ 자전거 도로로 다니기" },
+        { text: "차도 한가운데로 다닌다", correct: false, label: "🚗 차도 한가운데" },
+        { text: "사람 많은 인도를 빠르게 달린다", correct: false, label: "🏃 인도에서 빠르게" }
+      ],
+      hint: "정해진 자전거 도로로 다녀야 차와 사람 모두에게 안전해요."
+    },
+    {
+      situation: "자전거를 타고 가다가 횡단보도를 건너야 해요.",
+      options: [
+        { text: "자전거에서 내려서 끌고 걸어서 건넌다", correct: true, label: "🚶 내려서 끌고 건너기" },
+        { text: "탄 채로 빠르게 건넌다", correct: false, label: "🚲 탄 채로 건너기" },
+        { text: "신호를 안 보고 건넌다", correct: false, label: "🙅 신호 안 보고 건너기" }
+      ],
+      hint: "횡단보도에서는 자전거에서 내려 끌고 걸어가는 게 가장 안전해요."
+    },
+    {
+      situation: "킥보드를 탈 때 두 명이 함께 타도 될까요?",
+      options: [
+        { text: "한 번에 한 명만 타야 한다", correct: true, label: "🙅 한 명만 타기" },
+        { text: "친구와 같이 두 명이 타도 된다", correct: false, label: "👫 둘이 같이 타기" },
+        { text: "여러 명이 번갈아 매달려 타도 된다", correct: false, label: "👥 여러 명 매달리기" }
+      ],
+      hint: "한 번에 여러 명이 타면 균형을 잃고 넘어지기 쉬워요."
+    },
+    {
+      situation: "자전거 브레이크가 갑자기 잘 안 들어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "즉시 멈춰서 어른에게 점검을 부탁한다", correct: true, label: "🛑 멈추고 점검 부탁" },
+        { text: "그래도 계속 탄다", correct: false, label: "🚲 계속 타기" },
+        { text: "더 빠르게 달려본다", correct: false, label: "💨 더 빠르게 달리기" }
+      ],
+      hint: "브레이크가 이상하면 큰 사고로 이어질 수 있어 바로 점검받아야 해요."
+    },
+    {
+      situation: "밤에 자전거를 타야 한다면 무엇을 준비해야 할까요?",
+      options: [
+        { text: "라이트를 켜고 밝은 옷을 입는다", correct: true, label: "💡 라이트·밝은 옷" },
+        { text: "불빛 없이 어둡게 탄다", correct: false, label: "🌑 불빛 없이 타기" },
+        { text: "그냥 평소처럼 탄다", correct: false, label: "🤷 평소처럼 타기" }
+      ],
+      hint: "밤에는 라이트와 밝은 옷으로 운전자 눈에 잘 띄어야 안전해요."
+    },
+    {
+      situation: "실제 도로에서 자전거를 타는데 자동차가 옆으로 지나가요.",
+      options: [
+        { text: "차와 충분히 거리를 두고 천천히 탄다", correct: true, label: "↔️ 거리 두고 천천히" },
+        { text: "차에 바짝 붙어서 탄다", correct: false, label: "🚗 차에 바짝 붙기" },
+        { text: "손을 흔들며 장난친다", correct: false, label: "👋 손 흔들며 장난치기" }
+      ],
+      hint: "차와 충분한 거리를 두고 천천히 타야 사고를 피할 수 있어요."
+    },
+    {
+      situation: "자전거나 킥보드를 타다가 사람이 많은 곳을 지나가야 해요.",
+      options: [
+        { text: "속도를 줄이고 내려서 끌고 간다", correct: true, label: "🚶 속도 줄이고 끌고 가기" },
+        { text: "그대로 빠르게 지나간다", correct: false, label: "💨 빠르게 지나가기" },
+        { text: "경적처럼 소리 지르며 지나간다", correct: false, label: "📢 소리 지르며 지나가기" }
+      ],
+      hint: "사람이 많은 곳에서는 내려서 끌고 가야 부딪히지 않아요."
+    },
+    {
+      situation: "친구와 자전거 경주를 하고 싶어요. 안전한 방법은 무엇일까요?",
+      options: [
+        { text: "차가 없는 안전한 공터나 정해진 장소에서만 한다", correct: true, label: "🏟️ 안전한 장소에서만" },
+        { text: "도로에서 누가 빠른지 경주한다", correct: false, label: "🚗 도로에서 경주하기" },
+        { text: "신호를 무시하고 달린다", correct: false, label: "🙅 신호 무시하고 달리기" }
+      ],
+      hint: "경주는 차가 다니지 않는 안전한 장소에서만 해야 해요."
+    },
+    {
+      situation: "자전거·킥보드를 안전하게 타기 위한 습관은 무엇일까요?",
+      options: [
+        { text: "헬멧 착용, 안전한 길 이용, 속도 조절을 항상 지킨다", correct: true, label: "⛑️ 헬멧·안전한 길·속도" },
+        { text: "익숙해지면 헬멧 없이 타도 된다", correct: false, label: "🙅 익숙하면 헬멧 없이" },
+        { text: "빠르게 타는 게 제일 중요하다", correct: false, label: "💨 빠른 게 최고" }
+      ],
+      hint: "헬멧과 안전한 길, 알맞은 속도를 항상 지키는 습관이 사고를 막아줘요."
+    }
+  ];
+
+  var QUESTIONS_STAGE11 = [
+    {
+      situation: "갑자기 친구가 심하게 다쳐서 피가 많이 나요. 무엇을 먼저 해야 할까요?",
+      options: [
+        { text: "큰 소리로 어른을 부르고 119에 신고한다", correct: true, label: "📢 어른 부르고 119 신고" },
+        { text: "나 혼자 해결하려고 한다", correct: false, label: "🙅 혼자 해결하기" },
+        { text: "무서워서 도망간다", correct: false, label: "🏃 도망가기" }
+      ],
+      hint: "크게 다쳤을 땐 혼자 해결하려 하지 말고 어른과 119의 도움을 받아야 해요."
+    },
+    {
+      situation: "119에 신고할 때 가장 먼저 말해야 하는 것은 무엇일까요?",
+      options: [
+        { text: "지금 있는 정확한 위치", correct: true, label: "📍 정확한 위치" },
+        { text: "내 이름과 나이", correct: false, label: "🙋 이름과 나이" },
+        { text: "오늘 날씨", correct: false, label: "☀️ 오늘 날씨" }
+      ],
+      hint: "위치를 정확히 알려줘야 구급차가 빨리 찾아올 수 있어요."
+    },
+    {
+      situation: "119 신고 중 상담원이 질문을 계속 해요. 어떻게 해야 할까요?",
+      options: [
+        { text: "끊지 않고 침착하게 질문에 대답한다", correct: true, label: "🗣️ 침착하게 대답하기" },
+        { text: "급해서 바로 끊는다", correct: false, label: "📵 바로 끊기" },
+        { text: "대답 없이 기다리기만 한다", correct: false, label: "🤐 대답 없이 기다리기" }
+      ],
+      hint: "상담원의 질문에 침착하게 답해야 정확한 도움을 빨리 받을 수 있어요."
+    },
+    {
+      situation: "다친 사람의 상태를 설명할 때 무엇을 말해야 할까요?",
+      options: [
+        { text: "어디를 다쳤고 어떤 상태인지 본 대로 이야기한다", correct: true, label: "🗣️ 본 대로 이야기하기" },
+        { text: "그냥 \"빨리 와주세요\"만 반복한다", correct: false, label: "🔁 빨리 오라고만 반복" },
+        { text: "아무 설명 없이 끊는다", correct: false, label: "📵 설명 없이 끊기" }
+      ],
+      hint: "다친 부위와 상태를 정확히 설명해야 구급대원이 알맞게 준비해서 올 수 있어요."
+    },
+    {
+      situation: "구급차가 오는 길을 알려주고 도착을 도우려면 어떻게 해야 할까요?",
+      options: [
+        { text: "잘 보이는 곳에서 손을 흔들어 위치를 알려준다", correct: true, label: "👋 손 흔들어 위치 알리기" },
+        { text: "숨어서 기다린다", correct: false, label: "🙈 숨어서 기다리기" },
+        { text: "아무 표시 없이 가만히 있는다", correct: false, label: "🧍 가만히 있기" }
+      ],
+      hint: "잘 보이는 곳에서 손을 흔들면 구급대원이 더 빨리 찾아올 수 있어요."
+    },
+    {
+      situation: "친구가 갑자기 쓰러졌어요. 신고 전에 확인해야 할 것은 무엇일까요?",
+      options: [
+        { text: "친구가 숨을 쉬는지, 반응이 있는지 확인한다", correct: true, label: "👀 숨·반응 확인하기" },
+        { text: "바로 흔들어서 깨우려고 한다", correct: false, label: "🤚 흔들어 깨우기" },
+        { text: "그냥 지나간다", correct: false, label: "🚶 그냥 지나가기" }
+      ],
+      hint: "숨을 쉬는지, 반응이 있는지 먼저 확인해야 신고할 때 정확히 알릴 수 있어요."
+    },
+    {
+      situation: "119는 어떤 상황에서 불러야 할까요?",
+      options: [
+        { text: "크게 다치거나 위급한 상황일 때", correct: true, label: "🚑 위급 상황일 때" },
+        { text: "심심할 때", correct: false, label: "😐 심심할 때" },
+        { text: "장난으로 불러도 된다", correct: false, label: "😄 장난으로 부르기" }
+      ],
+      hint: "119는 정말 위급한 상황에서만 불러야 다른 사람도 제때 도움을 받을 수 있어요."
+    },
+    {
+      situation: "계단에서 넘어진 친구가 다리를 움직이지 못해요.",
+      options: [
+        { text: "억지로 움직이지 않게 하고 119에 신고한다", correct: true, label: "🙅 움직이지 않게 하고 신고" },
+        { text: "억지로 일으켜 세운다", correct: false, label: "🧍 억지로 일으키기" },
+        { text: "다리를 마구 주무른다", correct: false, label: "✋ 다리 주무르기" }
+      ],
+      hint: "다친 부위를 억지로 움직이면 더 심하게 다칠 수 있어요."
+    },
+    {
+      situation: "119 신고 후 구급대원이 올 때까지 무엇을 해야 할까요?",
+      options: [
+        { text: "다친 사람 곁에서 침착하게 상태를 지켜본다", correct: true, label: "🧍 곁에서 지켜보기" },
+        { text: "그냥 자리를 떠난다", correct: false, label: "🚶 자리 떠나기" },
+        { text: "신경 쓰지 않고 논다", correct: false, label: "🙅 신경 안 쓰고 놀기" }
+      ],
+      hint: "구급대원이 올 때까지 곁에서 상태를 지켜봐야 변화가 생기면 바로 알릴 수 있어요."
+    },
+    {
+      situation: "평소에 119 신고를 잘하기 위해 알아두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "우리 동네 이름과 가까운 건물 이름을 기억해둔다", correct: true, label: "📍 동네·건물 이름 기억" },
+        { text: "몰라도 그때 가서 알아보면 된다", correct: false, label: "🤷 그때 가서 알아보기" },
+        { text: "신고는 어른만 할 수 있어서 몰라도 된다", correct: false, label: "🙅 어른만 할 수 있다고 생각" }
+      ],
+      hint: "동네 이름과 근처 건물을 알아두면 위급할 때 훨씬 빠르게 신고할 수 있어요."
+    }
+  ];
+
+  var QUESTIONS_STAGE12 = [
+    {
+      situation: "놀다가 무릎이 까져서 피가 났어요. 제일 먼저 해야 할 일은?",
+      options: [
+        { text: "상처 부위를 깨끗한 물로 씻는다", correct: true, label: "💧 깨끗한 물로 씻기" },
+        { text: "흙 묻은 손으로 만진다", correct: false, label: "✋ 흙 묻은 손으로 만지기" },
+        { text: "그냥 놔둔다", correct: false, label: "🙅 그냥 놔두기" }
+      ],
+      hint: "상처는 먼저 깨끗한 물로 씻어야 세균 감염을 막을 수 있어요."
+    },
+    {
+      situation: "상처를 씻은 다음에는 어떻게 해야 할까요?",
+      options: [
+        { text: "깨끗한 밴드나 거즈로 상처를 덮는다", correct: true, label: "🩹 밴드로 덮기" },
+        { text: "아무것도 덮지 않고 그냥 둔다", correct: false, label: "🙅 그냥 두기" },
+        { text: "손으로 계속 만진다", correct: false, label: "✋ 계속 만지기" }
+      ],
+      hint: "깨끗한 밴드로 덮어야 상처에 먼지나 세균이 들어가지 않아요."
+    },
+    {
+      situation: "코피가 났어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "고개를 약간 숙이고 콧등을 지그시 눌러준다", correct: true, label: "🤏 숙이고 콧등 누르기" },
+        { text: "고개를 뒤로 젖힌다", correct: false, label: "⬆️ 고개 뒤로 젖히기" },
+        { text: "코를 세게 문지른다", correct: false, label: "✋ 코 세게 문지르기" }
+      ],
+      hint: "고개를 뒤로 젖히면 피가 목으로 넘어갈 수 있어요. 숙이고 눌러줘야 해요."
+    },
+    {
+      situation: "뜨거운 물에 살짝 데었어요(화상). 제일 먼저 해야 할 일은?",
+      options: [
+        { text: "흐르는 시원한 물로 화상 부위를 식힌다", correct: true, label: "💧 시원한 물로 식히기" },
+        { text: "얼음을 바로 대고 문지른다", correct: false, label: "🧊 얼음 바로 대기" },
+        { text: "연고부터 바로 바른다", correct: false, label: "🧴 연고부터 바르기" }
+      ],
+      hint: "화상은 시원한 물로 충분히 식히는 게 먼저예요. 얼음은 직접 대면 안 돼요."
+    },
+    {
+      situation: "벌레에 물려서 가렵고 부었어요.",
+      options: [
+        { text: "물린 곳을 깨끗이 하고 어른에게 보여준다", correct: true, label: "🙋 깨끗이 하고 보여주기" },
+        { text: "손톱으로 세게 긁는다", correct: false, label: "✋ 세게 긁기" },
+        { text: "그냥 참고 넘어간다", correct: false, label: "🤐 참고 넘어가기" }
+      ],
+      hint: "세게 긁으면 상처가 덧날 수 있어요. 깨끗이 하고 어른에게 보여줘야 해요."
+    },
+    {
+      situation: "친구가 넘어져서 팔을 심하게 다쳤어요(부러진 것 같아요).",
+      options: [
+        { text: "팔을 움직이지 않게 하고 어른에게 알린다", correct: true, label: "🙅 움직이지 않게 하고 알리기" },
+        { text: "팔을 억지로 펴본다", correct: false, label: "✋ 억지로 펴보기" },
+        { text: "혼자 부목을 대본다", correct: false, label: "🩹 혼자 부목 대기" }
+      ],
+      hint: "심하게 다친 부위는 움직이지 않게 하고 바로 어른에게 알려야 해요."
+    },
+    {
+      situation: "어지럽고 속이 안 좋은 친구가 있어요.",
+      options: [
+        { text: "편하게 앉거나 눕히고 어른에게 알린다", correct: true, label: "🪑 앉히고 알리기" },
+        { text: "억지로 걷게 한다", correct: false, label: "🚶 억지로 걷게 하기" },
+        { text: "신경 쓰지 않는다", correct: false, label: "🙅 신경 안 쓰기" }
+      ],
+      hint: "어지러워하는 친구는 편하게 쉬게 하고 어른에게 알려야 해요."
+    },
+    {
+      situation: "응급처치를 할 때 가장 중요한 마음가짐은 무엇일까요?",
+      options: [
+        { text: "침착하게 상황을 보고 어른에게 알린다", correct: true, label: "🧠 침착하게 알리기" },
+        { text: "무조건 혼자 다 해결하려 한다", correct: false, label: "🙅 혼자 해결하려 하기" },
+        { text: "무서워서 도망간다", correct: false, label: "🏃 도망가기" }
+      ],
+      hint: "침착함을 유지하고 어른에게 알리는 게 응급처치의 첫걸음이에요."
+    },
+    {
+      situation: "상처에 흙이나 이물질이 있으면 어떻게 해야 할까요?",
+      options: [
+        { text: "깨끗한 물로 조심스럽게 씻어낸다", correct: true, label: "💧 조심스럽게 씻어내기" },
+        { text: "그대로 밴드를 붙인다", correct: false, label: "🩹 그대로 밴드 붙이기" },
+        { text: "손으로 세게 파낸다", correct: false, label: "✋ 세게 파내기" }
+      ],
+      hint: "이물질이 있으면 감염될 수 있어요. 깨끗한 물로 조심스럽게 씻어야 해요."
+    },
+    {
+      situation: "응급처치를 배우면 좋은 이유는 무엇일까요?",
+      options: [
+        { text: "다친 사람을 더 빠르고 안전하게 도울 수 있어서", correct: true, label: "🙋 빠르고 안전하게 돕기" },
+        { text: "어른보다 내가 더 잘 고칠 수 있어서", correct: false, label: "😎 내가 더 잘 고친다고 생각" },
+        { text: "배우지 않아도 다 알 수 있어서", correct: false, label: "🤷 안 배워도 안다고 생각" }
+      ],
+      hint: "응급처치를 알아두면 위급한 순간에 침착하게 도움을 줄 수 있어요."
+    }
+  ];
+
+  var QUESTIONS_STAGE13 = [
+    {
+      situation: "아주 더운 날 밖에서 놀다가 어지럽고 힘이 없어요.",
+      options: [
+        { text: "시원한 그늘이나 실내로 가서 쉰다", correct: true, label: "🌳 그늘·실내에서 쉬기" },
+        { text: "계속 뛰어논다", correct: false, label: "🏃 계속 뛰어놀기" },
+        { text: "참고 더 놀다가 쉰다", correct: false, label: "🙅 참고 더 놀기" }
+      ],
+      hint: "어지럽고 힘이 없으면 바로 시원한 곳으로 가서 쉬어야 해요."
+    },
+    {
+      situation: "더운 날 밖에 나갈 때 꼭 챙겨야 하는 것은 무엇일까요?",
+      options: [
+        { text: "물과 모자", correct: true, label: "💧 물과 모자" },
+        { text: "두꺼운 겉옷", correct: false, label: "🧥 두꺼운 겉옷" },
+        { text: "아무것도 안 챙겨도 된다", correct: false, label: "🙅 안 챙겨도 됨" }
+      ],
+      hint: "물과 모자는 더위로부터 몸을 지켜주는 기본 준비물이에요."
+    },
+    {
+      situation: "더운 날씨에 물을 마시는 습관으로 알맞은 것은 무엇일까요?",
+      options: [
+        { text: "목이 마르지 않아도 조금씩 자주 마신다", correct: true, label: "💧 조금씩 자주 마시기" },
+        { text: "목이 마를 때만 한꺼번에 많이 마신다", correct: false, label: "🥤 한꺼번에 많이 마시기" },
+        { text: "물을 아예 안 마신다", correct: false, label: "🙅 물 안 마시기" }
+      ],
+      hint: "목이 마르기 전부터 조금씩 자주 마셔야 몸에 물이 부족해지지 않아요."
+    },
+    {
+      situation: "뜨거운 햇볕 아래 오래 있었더니 머리가 아프고 얼굴이 빨개졌어요.",
+      options: [
+        { text: "바로 시원한 곳으로 이동해 어른에게 알린다", correct: true, label: "🌳 시원한 곳으로 이동" },
+        { text: "그냥 참고 계속 있는다", correct: false, label: "🙅 참고 계속 있기" },
+        { text: "더 뜨거운 곳으로 간다", correct: false, label: "☀️ 더 뜨거운 곳으로" }
+      ],
+      hint: "머리가 아프고 얼굴이 빨개지면 열사병 신호일 수 있어요. 바로 시원한 곳으로 가야 해요."
+    },
+    {
+      situation: "자동차 안에 혼자 있으면 안 되는 이유는 무엇일까요?",
+      options: [
+        { text: "여름철 차 안은 아주 빠르게 뜨거워져서 위험하기 때문", correct: true, label: "🚗 차 안이 빨리 뜨거워짐" },
+        { text: "심심해서 안 된다", correct: false, label: "😐 심심해서" },
+        { text: "아무 이유 없다", correct: false, label: "🤷 이유 없음" }
+      ],
+      hint: "여름철 자동차 안은 짧은 시간에도 매우 뜨거워져서 아주 위험해요."
+    },
+    {
+      situation: "더운 날 야외 활동을 할 때 옷차림으로 알맞은 것은 무엇일까요?",
+      options: [
+        { text: "밝고 헐렁한 옷을 입는다", correct: true, label: "👕 밝고 헐렁한 옷" },
+        { text: "검고 꽉 끼는 옷을 입는다", correct: false, label: "👔 검고 꽉 끼는 옷" },
+        { text: "두꺼운 옷을 여러 겹 입는다", correct: false, label: "🧥 두꺼운 옷 여러 겹" }
+      ],
+      hint: "밝고 헐렁한 옷이 열을 덜 흡수하고 바람이 잘 통해서 시원해요."
+    },
+    {
+      situation: "친구가 더위를 먹어서 얼굴이 창백하고 식은땀을 흘려요.",
+      options: [
+        { text: "시원한 곳으로 옮기고 어른에게 바로 알린다", correct: true, label: "🌳 시원한 곳으로 옮기기" },
+        { text: "그대로 두고 지켜본다", correct: false, label: "🧍 그대로 두기" },
+        { text: "뜨거운 물을 마시게 한다", correct: false, label: "☕ 뜨거운 물 마시기" }
+      ],
+      hint: "더위를 먹은 친구는 빨리 시원한 곳으로 옮기고 어른에게 알려야 해요."
+    },
+    {
+      situation: "무더운 날 가장 더운 시간대에 바깥 활동을 하면 어떨까요?",
+      options: [
+        { text: "가능하면 피하고 실내에서 논다", correct: true, label: "🏠 실내에서 놀기" },
+        { text: "더울수록 더 신나게 논다", correct: false, label: "😆 더 신나게 놀기" },
+        { text: "상관없이 똑같이 논다", correct: false, label: "🤷 똑같이 놀기" }
+      ],
+      hint: "가장 더운 시간대는 피하고 실내에서 노는 게 안전해요."
+    },
+    {
+      situation: "폭염주의보가 내렸을 때 알맞은 행동은 무엇일까요?",
+      options: [
+        { text: "야외 활동을 줄이고 물을 충분히 마신다", correct: true, label: "💧 야외활동 줄이고 물 마시기" },
+        { text: "평소와 똑같이 행동한다", correct: false, label: "🤷 평소와 똑같이" },
+        { text: "더 오래 밖에서 논다", correct: false, label: "🏃 더 오래 밖에서 놀기" }
+      ],
+      hint: "폭염주의보가 내리면 야외 활동을 줄이고 물을 충분히 마셔야 해요."
+    },
+    {
+      situation: "여름철 안전을 위해 평소에 지킬 습관은 무엇일까요?",
+      options: [
+        { text: "물을 자주 마시고, 더울 땐 그늘과 시원한 곳을 찾는다", correct: true, label: "💧 물 자주·그늘 찾기" },
+        { text: "목마를 때까지 참는다", correct: false, label: "🙅 목마를 때까지 참기" },
+        { text: "더워도 계속 뛰어논다", correct: false, label: "🏃 계속 뛰어놀기" }
+      ],
+      hint: "물을 자주 마시고 더울 때 그늘을 찾는 습관이 여름철 안전을 지켜줘요."
+    }
+  ];
+
+  var QUESTIONS_STAGE14 = [
+    {
+      situation: "냉장고에 오래 둔 음식에서 이상한 냄새가 나요.",
+      options: [
+        { text: "먹지 않고 어른에게 확인을 받는다", correct: true, label: "🙋 어른께 확인받기" },
+        { text: "냄새만 안 맡으면 괜찮다며 먹는다", correct: false, label: "😐 냄새만 안 맡고 먹기" },
+        { text: "조금만 먹어본다", correct: false, label: "🍽️ 조금만 먹어보기" }
+      ],
+      hint: "이상한 냄새가 나는 음식은 먹지 말고 꼭 어른에게 확인받아야 해요."
+    },
+    {
+      situation: "음식을 먹기 전에 꼭 해야 하는 습관은 무엇일까요?",
+      options: [
+        { text: "손을 깨끗이 씻는다", correct: true, label: "🧼 손 깨끗이 씻기" },
+        { text: "손을 안 씻어도 괜찮다", correct: false, label: "🙅 안 씻어도 괜찮음" },
+        { text: "먹고 나서 씻는다", correct: false, label: "🍽️ 먹고 나서 씻기" }
+      ],
+      hint: "음식을 먹기 전에 손을 씻어야 세균이 몸에 들어가지 않아요."
+    },
+    {
+      situation: "유통기한이 지난 음식을 발견했어요.",
+      options: [
+        { text: "먹지 않고 어른에게 알린다", correct: true, label: "🙋 어른께 알리기" },
+        { text: "조금 지났으니 괜찮다며 먹는다", correct: false, label: "😐 조금 지났으니 먹기" },
+        { text: "냄새만 맡고 먹는다", correct: false, label: "👃 냄새만 맡고 먹기" }
+      ],
+      hint: "유통기한이 지난 음식은 먹지 말고 어른에게 알려야 안전해요."
+    },
+    {
+      situation: "길에서 파는 음식을 먹기 전에 확인하면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "위생적으로 보관·조리되었는지 살펴본다", correct: true, label: "👀 위생 상태 살펴보기" },
+        { text: "맛있어 보이면 바로 먹는다", correct: false, label: "😋 맛있어 보이면 먹기" },
+        { text: "아무거나 사서 먹는다", correct: false, label: "🍢 아무거나 사서 먹기" }
+      ],
+      hint: "위생 상태를 살펴보는 습관이 식중독을 예방해줘요."
+    },
+    {
+      situation: "음식을 먹다가 배가 아프고 토할 것 같아요.",
+      options: [
+        { text: "먹는 것을 멈추고 어른에게 알린다", correct: true, label: "🙋 멈추고 어른께 알리기" },
+        { text: "참고 계속 먹는다", correct: false, label: "🍽️ 참고 계속 먹기" },
+        { text: "아무 말 없이 넘어간다", correct: false, label: "🤐 말없이 넘어가기" }
+      ],
+      hint: "배가 아프면 바로 멈추고 어른에게 알려야 큰 탈이 나지 않아요."
+    },
+    {
+      situation: "여름철 음식 보관으로 알맞은 것은 무엇일까요?",
+      options: [
+        { text: "상하기 쉬운 음식은 냉장고에 바로 넣는다", correct: true, label: "🧊 냉장고에 바로 넣기" },
+        { text: "실온에 오래 꺼내둔다", correct: false, label: "🌡️ 실온에 오래 두기" },
+        { text: "아무 데나 둔다", correct: false, label: "🙅 아무 데나 두기" }
+      ],
+      hint: "더운 날씨엔 음식이 빨리 상하니 냉장고에 바로 넣어야 해요."
+    },
+    {
+      situation: "날음식(고기·계란 등)을 만진 다음에 해야 할 일은 무엇일까요?",
+      options: [
+        { text: "손을 비누로 깨끗이 씻는다", correct: true, label: "🧼 비누로 손 씻기" },
+        { text: "그냥 다른 음식을 만진다", correct: false, label: "✋ 그냥 다른 음식 만지기" },
+        { text: "옷에 닦고 넘어간다", correct: false, label: "👕 옷에 닦기" }
+      ],
+      hint: "날음식을 만진 손은 세균이 묻어있을 수 있어 꼭 씻어야 해요."
+    },
+    {
+      situation: "친구가 배탈이 나서 배가 아프다고 해요.",
+      options: [
+        { text: "어른에게 바로 알리고 편하게 쉬게 한다", correct: true, label: "🙋 어른께 알리고 쉬게 하기" },
+        { text: "신경 쓰지 않고 계속 논다", correct: false, label: "🙅 신경 안 쓰고 놀기" },
+        { text: "매운 음식을 더 준다", correct: false, label: "🌶️ 매운 음식 주기" }
+      ],
+      hint: "배탈 난 친구는 어른에게 알리고 편하게 쉴 수 있게 도와줘야 해요."
+    },
+    {
+      situation: "도시락을 오래 들고 다녔더니 뜨거워졌어요. 먹어도 될까요?",
+      options: [
+        { text: "상했을 수 있으니 냄새와 상태를 확인하고 먹는다", correct: true, label: "👀 상태 확인 후 먹기" },
+        { text: "그냥 다 먹는다", correct: false, label: "🍱 그냥 다 먹기" },
+        { text: "색깔만 보고 판단한다", correct: false, label: "🎨 색깔만 보고 판단" }
+      ],
+      hint: "오래 두어 뜨거워진 도시락은 상했을 수 있으니 꼭 확인해야 해요."
+    },
+    {
+      situation: "식중독을 예방하기 위한 습관은 무엇일까요?",
+      options: [
+        { text: "손 씻기, 익혀먹기, 유통기한 확인하기를 지킨다", correct: true, label: "🧼 손씻기·익혀먹기·확인하기" },
+        { text: "맛있으면 다 괜찮다고 생각한다", correct: false, label: "😋 맛있으면 괜찮다고 생각" },
+        { text: "손 씻기는 귀찮으니 생략한다", correct: false, label: "🙅 손 씻기 생략" }
+      ],
+      hint: "손 씻기, 익혀먹기, 유통기한 확인이 식중독을 예방하는 기본 습관이에요."
+    }
+  ];
+
+  var QUESTIONS_STAGE15 = [
+    {
+      situation: "엘리베이터를 타기 전에 확인해야 할 것은 무엇일까요?",
+      options: [
+        { text: "엘리베이터가 층에 정확히 멈췄는지 확인하고 탄다", correct: true, label: "👀 정확히 멈췄는지 확인" },
+        { text: "문이 열리자마자 바로 뛰어 들어간다", correct: false, label: "🏃 바로 뛰어 들어가기" },
+        { text: "확인 없이 발부터 내딛는다", correct: false, label: "🦶 확인 없이 발부터" }
+      ],
+      hint: "층이 정확히 맞는지 확인하고 타야 발을 헛디디지 않아요."
+    },
+    {
+      situation: "엘리베이터 안에서 갑자기 멈췄어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "비상벨을 눌러 도움을 요청한다", correct: true, label: "🔔 비상벨 누르기" },
+        { text: "문을 억지로 열려고 한다", correct: false, label: "🚪 문 억지로 열기" },
+        { text: "소리 지르며 문을 발로 찬다", correct: false, label: "🦵 문 발로 차기" }
+      ],
+      hint: "비상벨을 누르면 관리자나 구조대가 상황을 알고 도와줄 수 있어요."
+    },
+    {
+      situation: "엘리베이터에 갇혔을 때 침착하게 해야 할 행동은 무엇일까요?",
+      options: [
+        { text: "비상벨이나 인터폰으로 상황을 침착하게 설명한다", correct: true, label: "🗣️ 침착하게 설명하기" },
+        { text: "당황해서 마구 뛰어다닌다", correct: false, label: "😱 마구 뛰어다니기" },
+        { text: "천장을 억지로 열려고 한다", correct: false, label: "🔧 천장 열려고 하기" }
+      ],
+      hint: "침착하게 상황을 설명해야 구조대가 정확히 도와줄 수 있어요."
+    },
+    {
+      situation: "엘리베이터 문이 닫히려고 할 때 무리하게 타려고 하면 어떨까요?",
+      options: [
+        { text: "위험하니 다음 엘리베이터를 기다린다", correct: true, label: "🙅 다음 엘리베이터 기다리기" },
+        { text: "손이나 몸을 문 사이에 끼워 막는다", correct: false, label: "✋ 문 사이에 끼우기" },
+        { text: "뛰어서 무리하게 탄다", correct: false, label: "🏃 무리하게 타기" }
+      ],
+      hint: "문이 닫힐 때 무리하게 타려고 하면 끼이거나 다칠 수 있어요."
+    },
+    {
+      situation: "화재가 났을 때 엘리베이터를 타면 안 되는 이유는 무엇일까요?",
+      options: [
+        { text: "불이 나면 엘리베이터가 멈추거나 갇힐 수 있어서", correct: true, label: "🔥 멈추거나 갇힐 수 있음" },
+        { text: "그냥 타면 안 된다는 규칙이라서", correct: false, label: "📏 규칙이라서" },
+        { text: "엘리베이터가 느려서", correct: false, label: "🐢 느려서" }
+      ],
+      hint: "화재 때 엘리베이터는 멈추거나 갇힐 위험이 있어 계단을 이용해야 해요."
+    },
+    {
+      situation: "엘리베이터 정원(탈 수 있는 인원) 표시를 보면 어떻게 해야 할까요?",
+      options: [
+        { text: "정해진 인원과 무게를 넘지 않게 탄다", correct: true, label: "⚖️ 정원 지키기" },
+        { text: "정원과 상관없이 다 같이 탄다", correct: false, label: "👥 다 같이 타기" },
+        { text: "표시를 무시해도 된다", correct: false, label: "🙅 표시 무시하기" }
+      ],
+      hint: "정원을 넘기면 고장이나 사고가 날 수 있어 꼭 지켜야 해요."
+    },
+    {
+      situation: "엘리베이터 안에서 장난으로 버튼을 마구 누르면 어떻게 될까요?",
+      options: [
+        { text: "오작동으로 다른 사람이 불편하거나 위험할 수 있다", correct: true, label: "⚠️ 오작동 위험" },
+        { text: "아무 문제 없다", correct: false, label: "😐 문제 없음" },
+        { text: "재미있으니 계속 눌러도 된다", correct: false, label: "😄 계속 눌러도 됨" }
+      ],
+      hint: "버튼을 장난으로 누르면 엘리베이터가 오작동해 다른 사람이 위험할 수 있어요."
+    },
+    {
+      situation: "엘리베이터 안에서 문에 기대거나 발로 문을 막으면 어떨까요?",
+      options: [
+        { text: "위험하니 문에 기대지 않고 안쪽에 바르게 선다", correct: true, label: "🧍 안쪽에 바르게 서기" },
+        { text: "문에 기대도 괜찮다", correct: false, label: "🚪 문에 기대기" },
+        { text: "발로 문을 막아도 된다", correct: false, label: "🦶 발로 문 막기" }
+      ],
+      hint: "문에 기대면 문이 열릴 때 넘어지거나 끼일 수 있어 위험해요."
+    },
+    {
+      situation: "정전이 되어 엘리베이터 안이 갑자기 어두워졌어요.",
+      options: [
+        { text: "당황하지 않고 비상벨을 눌러 도움을 요청한다", correct: true, label: "🔔 비상벨 누르기" },
+        { text: "무서워서 소리만 지른다", correct: false, label: "😱 소리만 지르기" },
+        { text: "비상구를 억지로 찾아 나선다", correct: false, label: "🚪 비상구 억지로 찾기" }
+      ],
+      hint: "어두워져도 침착하게 비상벨을 눌러 도움을 요청해야 해요."
+    },
+    {
+      situation: "평소 엘리베이터를 안전하게 이용하는 습관은 무엇일까요?",
+      options: [
+        { text: "정원을 지키고, 문에 기대지 않고, 비상벨 위치를 알아둔다", correct: true, label: "🔔 정원·자세·비상벨 알기" },
+        { text: "정원을 넘겨도 급하면 괜찮다", correct: false, label: "👥 급하면 정원 넘기기" },
+        { text: "비상벨 위치는 몰라도 된다", correct: false, label: "🤷 비상벨 몰라도 됨" }
+      ],
+      hint: "정원 지키기, 바른 자세, 비상벨 위치 알기가 엘리베이터 안전의 기본이에요."
+    }
+  ];
+
+  var QUESTIONS_STAGE16 = [
+    {
+      situation: "태풍이 온다는 예보를 들었어요. 미리 준비할 것은 무엇일까요?",
+      options: [
+        { text: "창문을 단단히 잠그고 위험한 물건을 치운다", correct: true, label: "🪟 창문 잠그고 물건 치우기" },
+        { text: "평소처럼 창문을 열어둔다", correct: false, label: "🪟 창문 열어두기" },
+        { text: "아무 준비도 안 한다", correct: false, label: "🙅 준비 안 하기" }
+      ],
+      hint: "창문을 잠그고 날아갈 만한 물건을 치우면 태풍 피해를 줄일 수 있어요."
+    },
+    {
+      situation: "태풍이 부는 동안 밖에 나가면 위험한 이유는 무엇일까요?",
+      options: [
+        { text: "강한 바람에 물건이 날아오거나 넘어질 수 있어서", correct: true, label: "💨 물건이 날아올 수 있음" },
+        { text: "그냥 규칙이라서 안 된다", correct: false, label: "📏 규칙이라서" },
+        { text: "옷이 젖어서 안 된다", correct: false, label: "👕 옷이 젖어서" }
+      ],
+      hint: "강한 바람에 간판이나 나뭇가지 같은 것이 날아와 다칠 수 있어요."
+    },
+    {
+      situation: "홍수로 길에 물이 차올랐어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "물이 찬 길로 가지 않고 높은 곳으로 이동한다", correct: true, label: "⬆️ 높은 곳으로 이동" },
+        { text: "물이 얼마나 깊은지 걸어서 확인해본다", correct: false, label: "🚶 걸어서 확인하기" },
+        { text: "그대로 물속을 걸어간다", correct: false, label: "🌊 물속 걸어가기" }
+      ],
+      hint: "물이 찬 길은 깊이를 알 수 없어 위험해요. 높은 곳으로 피해야 해요."
+    },
+    {
+      situation: "태풍이 심할 때 창문 근처에 있으면 위험한 이유는 무엇일까요?",
+      options: [
+        { text: "유리가 깨지거나 날아온 물건에 다칠 수 있어서", correct: true, label: "🪟 유리 깨질 위험" },
+        { text: "창문 근처가 더워서", correct: false, label: "🥵 더워서" },
+        { text: "창문 근처는 시끄러워서", correct: false, label: "🔊 시끄러워서" }
+      ],
+      hint: "태풍 때는 창문에서 떨어져 있어야 유리 파편으로부터 안전해요."
+    },
+    {
+      situation: "집 안에서 태풍 때문에 정전이 되었어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "침착하게 손전등을 사용하고 어른과 함께 기다린다", correct: true, label: "🔦 손전등 쓰고 기다리기" },
+        { text: "촛불을 여기저기 켜놓는다", correct: false, label: "🕯️ 촛불 여기저기 켜기" },
+        { text: "어두운 곳을 혼자 돌아다닌다", correct: false, label: "🚶 혼자 돌아다니기" }
+      ],
+      hint: "촛불은 화재 위험이 있어요. 손전등을 쓰고 침착하게 기다려야 해요."
+    },
+    {
+      situation: "하천(개울)이나 계곡 근처에서 비가 많이 올 때는 어떻게 해야 할까요?",
+      options: [
+        { text: "물이 불어날 수 있으니 바로 멀리 떨어진다", correct: true, label: "🏃 멀리 떨어지기" },
+        { text: "신기해서 가까이서 구경한다", correct: false, label: "👀 가까이서 구경하기" },
+        { text: "물놀이를 계속한다", correct: false, label: "🏊 물놀이 계속하기" }
+      ],
+      hint: "비가 많이 오면 물이 갑자기 불어날 수 있어 아주 위험해요."
+    },
+    {
+      situation: "태풍이 지나간 뒤 밖에 나갈 때 조심해야 할 것은 무엇일까요?",
+      options: [
+        { text: "넘어진 나무나 끊어진 전선을 조심한다", correct: true, label: "⚡ 나무·전선 조심하기" },
+        { text: "아무 조심 없이 뛰어다닌다", correct: false, label: "🏃 조심 없이 뛰어다니기" },
+        { text: "끊어진 전선을 만져본다", correct: false, label: "✋ 끊어진 전선 만지기" }
+      ],
+      hint: "태풍 후에는 넘어진 나무나 끊어진 전선이 있을 수 있어 조심해야 해요."
+    },
+    {
+      situation: "학교나 집에서 태풍 대비 방송이 나와요. 어떻게 해야 할까요?",
+      options: [
+        { text: "방송을 잘 듣고 안내에 따라 행동한다", correct: true, label: "📻 안내에 따라 행동" },
+        { text: "방송을 무시하고 하던 일을 계속한다", correct: false, label: "🙅 방송 무시하기" },
+        { text: "친구들과 장난친다", correct: false, label: "😄 친구와 장난치기" }
+      ],
+      hint: "태풍 방송은 안전을 위한 중요한 안내이니 잘 듣고 따라야 해요."
+    },
+    {
+      situation: "지하 공간(지하주차장 등)에 물이 차오르기 시작했어요.",
+      options: [
+        { text: "즉시 지상으로 대피한다", correct: true, label: "⬆️ 즉시 지상으로 대피" },
+        { text: "물건을 챙기러 더 들어간다", correct: false, label: "🎒 물건 챙기러 들어가기" },
+        { text: "물이 빠질 때까지 기다린다", correct: false, label: "⏳ 물 빠질 때까지 기다리기" }
+      ],
+      hint: "지하 공간은 물이 차면 빠르게 위험해져요. 바로 지상으로 대피해야 해요."
+    },
+    {
+      situation: "태풍·홍수에 안전하게 대비하는 평소 습관은 무엇일까요?",
+      options: [
+        { text: "미리 일기예보를 확인하고, 위험 방송이 나오면 안내를 따른다", correct: true, label: "📻 예보 확인·안내 따르기" },
+        { text: "날씨는 신경 쓰지 않는다", correct: false, label: "🙅 날씨 신경 안 쓰기" },
+        { text: "방송이 나와도 평소처럼 지낸다", correct: false, label: "🤷 평소처럼 지내기" }
+      ],
+      hint: "미리 예보를 확인하고 안내 방송을 따르는 습관이 태풍·홍수 피해를 줄여줘요."
+    }
+  ];
+
+  var QUESTIONS_STAGE17 = [
+    {
+      situation: "백화점이나 영화관에 처음 가면 미리 확인해두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "비상구가 어디에 있는지 미리 살펴본다", correct: true, label: "🚪 비상구 미리 살펴보기" },
+        { text: "확인하지 않아도 괜찮다", correct: false, label: "🙅 확인 안 해도 됨" },
+        { text: "화장실 위치만 확인한다", correct: false, label: "🚻 화장실 위치만" }
+      ],
+      hint: "비상구 위치를 미리 알아두면 위급할 때 빠르게 대피할 수 있어요."
+    },
+    {
+      situation: "사람 많은 곳에서 화재경보음이 울렸어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "안내 방송과 직원 안내에 따라 침착하게 이동한다", correct: true, label: "📢 안내에 따라 이동" },
+        { text: "소리가 잘못 울린 거라 생각하고 무시한다", correct: false, label: "🙅 무시하기" },
+        { text: "아무 안내 없이 혼자 뛴다", correct: false, label: "🏃 혼자 뛰기" }
+      ],
+      hint: "경보음이 울리면 안내 방송과 직원 지시에 따라 침착하게 움직여야 해요."
+    },
+    {
+      situation: "대피할 때 사람들이 한꺼번에 몰려요. 어떻게 해야 안전할까요?",
+      options: [
+        { text: "밀지 않고 줄을 지어 천천히 이동한다", correct: true, label: "🚶 밀지 않고 천천히" },
+        { text: "빨리 가려고 앞사람을 민다", correct: false, label: "🙅 앞사람 밀기" },
+        { text: "소리를 지르며 뛰어간다", correct: false, label: "😱 소리 지르며 뛰기" }
+      ],
+      hint: "밀거나 뛰면 넘어져 더 위험해져요. 줄을 지어 천천히 움직여야 해요."
+    },
+    {
+      situation: "다중이용시설에서 화재 시 엘리베이터 대신 이용해야 하는 것은 무엇일까요?",
+      options: [
+        { text: "계단", correct: true, label: "🪜 계단" },
+        { text: "에스컬레이터", correct: false, label: "🔼 에스컬레이터" },
+        { text: "엘리베이터", correct: false, label: "🛗 엘리베이터" }
+      ],
+      hint: "화재 때는 엘리베이터가 멈출 수 있어 반드시 계단을 이용해야 해요."
+    },
+    {
+      situation: "연기가 가득한 통로를 지나가야 해요.",
+      options: [
+        { text: "몸을 낮추고 코와 입을 막은 채 이동한다", correct: true, label: "🐾 낮게 막고 이동" },
+        { text: "서서 빠르게 뛰어간다", correct: false, label: "🏃 서서 뛰기" },
+        { text: "숨을 크게 들이쉬며 걷는다", correct: false, label: "😤 숨 크게 쉬기" }
+      ],
+      hint: "연기는 위로 올라가니 몸을 낮추고 코와 입을 막아야 안전해요."
+    },
+    {
+      situation: "대피하다가 앞이 막혀 다른 길로 가야 해요.",
+      options: [
+        { text: "다른 비상구나 안내된 대피로를 찾아 이동한다", correct: true, label: "🚪 다른 비상구 찾기" },
+        { text: "그 자리에서 멈춰 서 있는다", correct: false, label: "🧍 멈춰 서 있기" },
+        { text: "막힌 길을 억지로 뚫고 간다", correct: false, label: "🙅 억지로 뚫고 가기" }
+      ],
+      hint: "길이 막히면 다른 비상구나 안내된 대피로를 찾아 침착하게 이동해야 해요."
+    },
+    {
+      situation: "대피한 뒤 가족이나 일행과 흩어졌어요.",
+      options: [
+        { text: "미리 정한 집결 장소에서 기다리거나 안내소에 알린다", correct: true, label: "📍 집결 장소서 기다리기" },
+        { text: "혼자 이곳저곳 찾아 헤맨다", correct: false, label: "🚶 이곳저곳 헤매기" },
+        { text: "아무것도 안 하고 그냥 서 있는다", correct: false, label: "🧍 그냥 서 있기" }
+      ],
+      hint: "정한 장소에서 기다리거나 안내소에 알리면 가족과 다시 만날 수 있어요."
+    },
+    {
+      situation: "다중이용시설에서 대피 훈련 방송이 나오면 어떻게 해야 할까요?",
+      options: [
+        { text: "실제 상황처럼 진지하게 안내를 따른다", correct: true, label: "🙋 진지하게 안내 따르기" },
+        { text: "훈련이니까 신경 쓰지 않는다", correct: false, label: "🙅 신경 안 쓰기" },
+        { text: "장난치며 논다", correct: false, label: "😄 장난치며 놀기" }
+      ],
+      hint: "훈련도 실제처럼 진지하게 참여해야 진짜 상황에서 잘 대처할 수 있어요."
+    },
+    {
+      situation: "화재 시 물건(가방, 쇼핑백 등)을 놓고 왔어요.",
+      options: [
+        { text: "물건보다 몸이 중요하니 그냥 대피한다", correct: true, label: "🏃 몸이 우선, 그냥 대피" },
+        { text: "물건을 가지러 다시 들어간다", correct: false, label: "🎒 다시 들어가기" },
+        { text: "물건부터 챙기고 나온다", correct: false, label: "🛍️ 물건부터 챙기기" }
+      ],
+      hint: "물건보다 내 몸이 훨씬 소중해요. 절대 다시 들어가면 안 돼요."
+    },
+    {
+      situation: "다중이용시설을 안전하게 이용하는 습관은 무엇일까요?",
+      options: [
+        { text: "도착하면 비상구 위치를 확인하고, 방송·안내를 잘 따른다", correct: true, label: "🚪 비상구 확인·안내 따르기" },
+        { text: "비상구는 안 봐도 된다", correct: false, label: "🙅 비상구 안 봐도 됨" },
+        { text: "안내방송은 무시해도 된다", correct: false, label: "🔇 안내방송 무시" }
+      ],
+      hint: "도착 후 비상구를 확인하고 안내를 따르는 습관이 위급할 때 큰 도움이 돼요."
+    }
+  ];
+
   var STAGES = [
     {
       key: "stage1",
+      hq: "fire",
       emoji: "🔥",
       mapTitle: "1화 · 불이야! 소방 출동 훈련",
       shortTitle: "불이야! 소방 출동 훈련",
@@ -1406,6 +2258,7 @@
     },
     {
       key: "stage2",
+      hq: "police",
       emoji: "🚗",
       mapTitle: "2화 · 조심조심! 교통안전 훈련",
       shortTitle: "조심조심! 교통안전 훈련",
@@ -1414,6 +2267,7 @@
     },
     {
       key: "stage3",
+      hq: "fire",
       emoji: "🏚️",
       mapTitle: "3화 · 흔들흔들! 지진 대피 훈련",
       shortTitle: "흔들흔들! 지진 대피 훈련",
@@ -1422,6 +2276,7 @@
     },
     {
       key: "stage4",
+      hq: "police",
       emoji: "📱",
       mapTitle: "4화 · 톡톡! 사이버 안전 훈련",
       shortTitle: "톡톡! 사이버 안전 훈련",
@@ -1430,6 +2285,7 @@
     },
     {
       key: "stage5",
+      hq: "medical",
       emoji: "🌊",
       mapTitle: "5화 · 첨벙첨벙! 물놀이 안전 훈련",
       shortTitle: "첨벙첨벙! 물놀이 안전 훈련",
@@ -1438,6 +2294,7 @@
     },
     {
       key: "stage6",
+      hq: "police",
       emoji: "🧭",
       mapTitle: "6화 · 조심조심! 낯선 사람 대처 훈련",
       shortTitle: "조심조심! 낯선 사람 대처 훈련",
@@ -1446,13 +2303,119 @@
     },
     {
       key: "stage7",
+      hq: "fire",
       emoji: "🔌",
       mapTitle: "7화 · 번쩍번쩍! 가스·전기 안전 훈련",
       shortTitle: "번쩍번쩍! 가스·전기 안전 훈련",
       desc: "가스와 전기를 안전하게 다뤄요",
       questions: QUESTIONS_STAGE7
+    },
+    {
+      key: "stage8",
+      hq: "police",
+      emoji: "🤝",
+      mapTitle: "8화 · 우리는 친구! 학교폭력 예방 훈련",
+      shortTitle: "우리는 친구! 학교폭력 예방 훈련",
+      desc: "친구 사이에서 안전하고 지혜롭게 행동해요",
+      questions: QUESTIONS_STAGE8
+    },
+    {
+      key: "stage9",
+      hq: "police",
+      emoji: "🚨",
+      mapTitle: "9화 · 도와주세요! 112 신고 훈련",
+      shortTitle: "도와주세요! 112 신고 훈련",
+      desc: "위급할 때 112에 침착하게 신고하는 법을 배워요",
+      questions: QUESTIONS_STAGE9
+    },
+    {
+      key: "stage10",
+      hq: "police",
+      emoji: "🛴",
+      mapTitle: "10화 · 씽씽! 자전거·킥보드 안전 훈련",
+      shortTitle: "씽씽! 자전거·킥보드 안전 훈련",
+      desc: "자전거와 킥보드를 안전하게 타는 법을 배워요",
+      questions: QUESTIONS_STAGE10
+    },
+    {
+      key: "stage11",
+      hq: "medical",
+      emoji: "🚑",
+      mapTitle: "11화 · 도와주세요! 119 신고 훈련",
+      shortTitle: "도와주세요! 119 신고 훈련",
+      desc: "다치거나 아플 때 119에 침착하게 신고하는 법을 배워요",
+      questions: QUESTIONS_STAGE11
+    },
+    {
+      key: "stage12",
+      hq: "medical",
+      emoji: "🩹",
+      mapTitle: "12화 · 새싹 구급대! 응급처치 기초 훈련",
+      shortTitle: "새싹 구급대! 응급처치 기초 훈련",
+      desc: "다쳤을 때 침착하게 대처하는 법을 배워요",
+      questions: QUESTIONS_STAGE12
+    },
+    {
+      key: "stage13",
+      hq: "medical",
+      emoji: "🥵",
+      mapTitle: "13화 · 무더위 조심! 폭염·열사병 안전 훈련",
+      shortTitle: "무더위 조심! 폭염·열사병 안전 훈련",
+      desc: "더운 날씨에 몸을 지키는 법을 배워요",
+      questions: QUESTIONS_STAGE13
+    },
+    {
+      key: "stage14",
+      hq: "medical",
+      emoji: "🍱",
+      mapTitle: "14화 · 배탈 조심! 식중독·식품안전 훈련",
+      shortTitle: "배탈 조심! 식중독·식품안전 훈련",
+      desc: "음식을 안전하게 먹는 법을 배워요",
+      questions: QUESTIONS_STAGE14
+    },
+    {
+      key: "stage15",
+      hq: "fire",
+      emoji: "🛗",
+      mapTitle: "15화 · 꼼짝마! 승강기 안전사고 훈련",
+      shortTitle: "꼼짝마! 승강기 안전사고 훈련",
+      desc: "엘리베이터에 갇히거나 고장났을 때 대처하는 법을 배워요",
+      questions: QUESTIONS_STAGE15
+    },
+    {
+      key: "stage16",
+      hq: "fire",
+      emoji: "🌪️",
+      mapTitle: "16화 · 후드득! 태풍·홍수 안전 훈련",
+      shortTitle: "후드득! 태풍·홍수 안전 훈련",
+      desc: "태풍과 홍수가 났을 때 안전하게 대처해요",
+      questions: QUESTIONS_STAGE16
+    },
+    {
+      key: "stage17",
+      hq: "fire",
+      emoji: "🏬",
+      mapTitle: "17화 · 사람 많은 곳! 다중이용시설 화재대피 훈련",
+      shortTitle: "사람 많은 곳! 다중이용시설 화재대피 훈련",
+      desc: "백화점·영화관 같은 곳에서 안전하게 대피하는 법을 배워요",
+      questions: QUESTIONS_STAGE17
     }
   ];
+
+  var HQ_INFO = {
+    fire: { emoji: "🚒", name: "소방 안전본부", subtitle: "불과 연기, 재난 상황에서 침착하게 행동하는 법을 배워보자." },
+    police: { emoji: "🚓", name: "경찰 안전본부", subtitle: "교통안전, 사이버 안전, 낯선 사람 대처법을 배우는 미션이야." },
+    medical: { emoji: "🚑", name: "구급 안전본부", subtitle: "물놀이 안전과 다친 친구를 돕는 법을 배우는 미션이야." }
+  };
+  var HQ_ORDER = ["fire", "police", "medical"];
+
+  function stagesForHq(hqId){
+    var indices = [];
+    STAGES.forEach(function(stage, idx){
+      if(stage.hq === hqId) indices.push(idx);
+    });
+    return indices;
+  }
 
   var STEP_UP = 3;
   var CALM_STEP = 10;
@@ -1460,6 +2423,7 @@
 
   var state = {
     stageIndex: 0,
+    currentHq: "fire",
     qIndex: 0,
     total: 10,
     stepDown: 10,
@@ -1518,10 +2482,15 @@
     return s;
   }
 
-  function isStageUnlocked(index){
-    if(index === 0) return true;
+  // 잠금은 본부 단위로 독립적으로 계산한다.
+  // (예: 경찰 본부의 2화->4화->6화 순서는 소방/구급 본부 진행 상황과 무관하다)
+  function isStageUnlocked(globalIndex){
+    var stage = STAGES[globalIndex];
+    var hqStages = stagesForHq(stage.hq);
+    var posInHq = hqStages.indexOf(globalIndex);
+    if(posInHq === 0) return true;
     var data = loadProgress();
-    var prevKey = STAGES[index-1].key;
+    var prevKey = STAGES[hqStages[posInHq - 1]].key;
     return !!(data[prevKey] && data[prevKey].cleared);
   }
 
@@ -1544,27 +2513,78 @@
     }
   }
 
-  function refreshMapScreen(){
-    var data = loadProgress();
-    STAGES.forEach(function(stage, index){
-      var n = index + 1;
-      var card = $("stage-" + n + "-card");
-      var unlocked = isStageUnlocked(index);
-      card.classList.toggle("unlocked", unlocked);
-      card.classList.toggle("locked", !unlocked);
-      if(unlocked){
-        $("stage-" + n + "-emoji").textContent = stage.emoji;
-        $("stage-" + n + "-title").textContent = stage.mapTitle;
-        $("stage-" + n + "-desc").textContent = stage.desc;
-        var stars = (data[stage.key] && data[stage.key].bestStars) || 0;
-        $("stage-" + n + "-stars").textContent = starString(stars);
-        $("stage-" + n + "-stars").style.display = "block";
-      } else {
-        $("stage-" + n + "-emoji").textContent = "🔒";
-        $("stage-" + n + "-title").textContent = n + "화 · 잠겨있어요";
-        $("stage-" + n + "-desc").textContent = "이전 이야기를 클리어하면 열려요";
-        $("stage-" + n + "-stars").style.display = "none";
+  function renderHqScreen(){
+    var list = $("hq-list");
+    list.innerHTML = "";
+    HQ_ORDER.forEach(function(hqId){
+      var info = HQ_INFO[hqId];
+      var hasStages = stagesForHq(hqId).length > 0;
+      var card = document.createElement("div");
+      card.className = "stage-card " + (hasStages ? "unlocked" : "locked");
+      var emojiDiv = document.createElement("div");
+      emojiDiv.className = "stage-emoji";
+      emojiDiv.textContent = info.emoji;
+      var infoDiv = document.createElement("div");
+      infoDiv.className = "stage-info";
+      var titleDiv = document.createElement("div");
+      titleDiv.className = "stage-title";
+      titleDiv.textContent = info.name;
+      var descDiv = document.createElement("div");
+      descDiv.className = "stage-desc";
+      descDiv.textContent = hasStages ? info.subtitle : "미션이 곧 열려요.";
+      infoDiv.appendChild(titleDiv);
+      infoDiv.appendChild(descDiv);
+      card.appendChild(emojiDiv);
+      card.appendChild(infoDiv);
+      if(hasStages){
+        card.addEventListener("click", function(){ showMapForHq(hqId); });
       }
+      list.appendChild(card);
+    });
+  }
+
+  function showMapForHq(hqId){
+    state.currentHq = hqId;
+    var info = HQ_INFO[hqId];
+    $("map-hq-heading").textContent = info.emoji + " " + info.name + " 사건 지도";
+    $("map-hq-subtitle").textContent = info.subtitle;
+    renderMapScreen();
+    showScreen("screen-map");
+  }
+
+  function renderMapScreen(){
+    var data = loadProgress();
+    var list = $("stage-list");
+    list.innerHTML = "";
+    stagesForHq(state.currentHq).forEach(function(globalIndex){
+      var stage = STAGES[globalIndex];
+      var unlocked = isStageUnlocked(globalIndex);
+      var card = document.createElement("div");
+      card.className = "stage-card " + (unlocked ? "unlocked" : "locked");
+      var emojiDiv = document.createElement("div");
+      emojiDiv.className = "stage-emoji";
+      emojiDiv.textContent = unlocked ? stage.emoji : "🔒";
+      var infoDiv = document.createElement("div");
+      infoDiv.className = "stage-info";
+      var titleDiv = document.createElement("div");
+      titleDiv.className = "stage-title";
+      titleDiv.textContent = unlocked ? stage.mapTitle : "잠겨있어요";
+      var descDiv = document.createElement("div");
+      descDiv.className = "stage-desc";
+      descDiv.textContent = unlocked ? stage.desc : "이전 이야기를 클리어하면 열려요";
+      infoDiv.appendChild(titleDiv);
+      infoDiv.appendChild(descDiv);
+      if(unlocked){
+        var starsDiv = document.createElement("div");
+        starsDiv.className = "stage-stars";
+        var stars = (data[stage.key] && data[stage.key].bestStars) || 0;
+        starsDiv.textContent = starString(stars);
+        infoDiv.appendChild(starsDiv);
+        card.addEventListener("click", function(){ startStage(globalIndex); });
+      }
+      card.appendChild(emojiDiv);
+      card.appendChild(infoDiv);
+      list.appendChild(card);
     });
   }
 
@@ -1787,6 +2807,7 @@
       return;
     }
     renderPlayerChip($("hq-player-chip"));
+    renderHqScreen();
     showScreen("screen-hq");
   }
 
@@ -1893,24 +2914,15 @@
   });
   $("btn-map-back").addEventListener("click", function(){
     renderPlayerChip($("hq-player-chip"));
+    renderHqScreen();
     showScreen("screen-hq");
   });
   $("btn-hq-back").addEventListener("click", function(){
     refreshMainScreen();
     showScreen("screen-main");
   });
-  $("hq-fire-card").addEventListener("click", function(){
-    refreshMapScreen();
-    showScreen("screen-map");
-  });
-  STAGES.forEach(function(stage, index){
-    $("stage-" + (index+1) + "-card").addEventListener("click", function(){
-      if(!isStageUnlocked(index)) return;
-      startStage(index);
-    });
-  });
   $("btn-clear-map").addEventListener("click", function(){
-    refreshMapScreen();
+    renderMapScreen();
     showScreen("screen-map");
   });
   $("btn-clear-retry").addEventListener("click", function(){
