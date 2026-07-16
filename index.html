@@ -236,6 +236,37 @@
   }
   .stat-card b{color:var(--accent);font-size:1.1rem;}
 
+  /* 도담박사 인트로 / 캐릭터 생성 */
+  .text-input{
+    width:100%;
+    padding:.9rem 1rem;
+    border-radius:14px;
+    border:2px solid #3a4a90;
+    background:#141d3f;
+    color:var(--text);
+    font-size:1.05rem;
+    margin:.6rem 0 .3rem;
+    text-align:center;
+  }
+  .text-input:focus{outline:none;border-color:var(--accent);}
+  .name-warning{color:var(--danger);font-size:.85rem;margin-bottom:.4rem;min-height:1.1rem;}
+  .gender-options{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin:.8rem 0;}
+  .gender-card{
+    background:var(--card);
+    border:2px solid #3a4a90;
+    border-radius:16px;
+    padding:1.2rem .8rem;
+    text-align:center;
+    cursor:pointer;
+    font-weight:700;
+    font-size:.92rem;
+    color:var(--text);
+    transition:transform .1s ease, border-color .15s ease;
+  }
+  .gender-card .gender-emoji{font-size:2.6rem;display:block;margin-bottom:.4rem;}
+  .gender-card:active{transform:scale(.97);}
+  .gender-card:hover{border-color:var(--accent);}
+
   @media (min-width:600px){
     h1{font-size:1.8rem;}
     .hero-emoji{font-size:7rem;}
@@ -252,6 +283,52 @@
     <p class="subtitle">위험한 상황에 안전 행동으로 씩씩하게 맞서요!</p>
     <div class="progress-summary" id="main-progress" style="display:none;"></div>
     <button class="btn btn-primary" id="btn-start">모험 시작하기</button>
+    <button class="btn btn-primary" id="btn-continue" style="display:none;">이어하기</button>
+    <button class="btn btn-ghost" id="btn-restart-intro" style="display:none;">처음부터 다시</button>
+  </section>
+
+  <!-- 도담박사 인트로 -->
+  <section class="screen" id="screen-intro">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text" id="intro-text"></div>
+      <div class="dialogue-arrow" id="intro-arrow">▼</div>
+    </div>
+    <button class="btn btn-primary" id="btn-intro-next" disabled>다음</button>
+  </section>
+
+  <!-- 캐릭터(성별) 선택 -->
+  <section class="screen" id="screen-gender">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text">먼저 너에 대해 알려줄래?
+너는 어떤 리틀 히어로로 시작하고 싶니?</div>
+    </div>
+    <div class="gender-options">
+      <div class="gender-card" id="btn-gender-boy"><span class="gender-emoji">🦸‍♂️</span>남자아이 히어로</div>
+      <div class="gender-card" id="btn-gender-girl"><span class="gender-emoji">🦸‍♀️</span>여자아이 히어로</div>
+    </div>
+  </section>
+
+  <!-- 이름 입력 -->
+  <section class="screen" id="screen-name">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text">좋아! 이제 너의 이름을 알려줘.
+앞으로 아카데미에서는 이 이름으로 불릴 거야.</div>
+    </div>
+    <input type="text" class="text-input" id="name-input" maxlength="8" placeholder="이름을 입력해주세요">
+    <div class="name-warning" id="name-warning" style="visibility:hidden;">이름을 입력해야 다음으로 갈 수 있어요!</div>
+    <button class="btn btn-primary" id="btn-name-next">확인</button>
+  </section>
+
+  <!-- 도담박사 입학 선언 -->
+  <section class="screen" id="screen-welcome">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text" id="welcome-text"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-welcome-next" disabled>모험 시작하기</button>
   </section>
 
   <!-- 사건 지도 -->
@@ -301,6 +378,22 @@
           <div class="stage-stars" id="stage-5-stars">☆☆☆</div>
         </div>
       </div>
+      <div class="stage-card" id="stage-6-card">
+        <div class="stage-emoji" id="stage-6-emoji">🔒</div>
+        <div class="stage-info">
+          <div class="stage-title" id="stage-6-title">6화 · 잠겨있어요</div>
+          <div class="stage-desc" id="stage-6-desc">이전 이야기를 클리어하면 열려요</div>
+          <div class="stage-stars" id="stage-6-stars">☆☆☆</div>
+        </div>
+      </div>
+      <div class="stage-card" id="stage-7-card">
+        <div class="stage-emoji" id="stage-7-emoji">🔒</div>
+        <div class="stage-info">
+          <div class="stage-title" id="stage-7-title">7화 · 잠겨있어요</div>
+          <div class="stage-desc" id="stage-7-desc">이전 이야기를 클리어하면 열려요</div>
+          <div class="stage-stars" id="stage-7-stars">☆☆☆</div>
+        </div>
+      </div>
     </div>
     <button class="btn btn-ghost" id="btn-map-back">메인으로</button>
   </section>
@@ -344,6 +437,15 @@
     <div class="options" id="options"></div>
   </section>
 
+  <!-- 도담박사 이벤트 -->
+  <section class="screen" id="screen-event">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text" id="event-text"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-event-continue">계속하기</button>
+  </section>
+
   <!-- 클리어 화면 -->
   <section class="screen" id="screen-clear">
     <div class="clear-emoji">🏅</div>
@@ -362,6 +464,80 @@
 <script>
 (function(){
   "use strict";
+
+  var PROFILE_KEY = "lha_profile";
+
+  function loadProfile(){
+    try{
+      return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {};
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveProfile(){
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  }
+
+  var profile = loadProfile();
+
+  function playerName(){
+    return profile.playerName || "리틀 히어로";
+  }
+
+  var DODAM_INTRO_TEXT = "안녕! 나는 리틀 히어로 아카데미의 도담박사란다.\n\n이곳에서는 위험한 순간을 이겨내는 방법을 배우지.\n힘이 센 아이가 히어로가 되는 게 아니야.\n위험을 알아차리고, 안전하게 행동하는 아이가 진짜 히어로란다.";
+
+  var storyEvents = [
+    {
+      id: "intro_hint",
+      trigger: "before_first_question",
+      speaker: "도담박사",
+      text: "잠깐, {playerName}! 위험한 상황에서는 먼저 주변을 살피는 게 중요하단다.",
+      shown: false
+    },
+    {
+      id: "mid_encouragement",
+      trigger: "after_correct_3",
+      speaker: "도담박사",
+      text: "좋아, {playerName}. 히어로는 빠르게 움직이는 사람보다 침착하게 판단하는 사람이란다.",
+      shown: false
+    },
+    {
+      id: "before_clear_cheer",
+      trigger: "before_clear",
+      speaker: "도담박사",
+      text: "이제 거의 다 왔어. 마지막까지 안전하게 판단해보자!",
+      shown: false
+    }
+  ];
+
+  function fillTemplate(text){
+    return text.split("{playerName}").join(playerName());
+  }
+
+  var pendingEventContinue = null;
+
+  function showDodamEvent(text, onContinue){
+    pendingEventContinue = onContinue;
+    showScreen("screen-event");
+    typeText($("event-text"), fillTemplate(text));
+  }
+
+  function triggerStoryEvent(triggerName, onContinue){
+    var ev = null;
+    for(var i=0;i<storyEvents.length;i++){
+      if(storyEvents[i].trigger === triggerName && !storyEvents[i].shown){
+        ev = storyEvents[i];
+        break;
+      }
+    }
+    if(!ev){
+      onContinue();
+      return;
+    }
+    ev.shown = true;
+    showDodamEvent(ev.text, onContinue);
+  }
 
   var QUESTIONS_STAGE1 = [
     {
@@ -828,6 +1004,192 @@
     }
   ];
 
+  var QUESTIONS_STAGE6 = [
+    {
+      situation: "낯선 어른이 \"우리 강아지 좀 찾아줄래?\"라고 도움을 요청해요.",
+      options: [
+        { text: "거절하고 사람 많은 안전한 곳(가게, 어른)으로 간다", correct: true, label: "🙅 거절하고 안전한 곳으로" },
+        { text: "착한 마음으로 순순히 따라간다", correct: false, label: "🐾 따라가기" },
+        { text: "혼자 강아지를 찾으러 나선다", correct: false, label: "🔍 혼자 찾아다니기" }
+      ],
+      hint: "낯선 어른이 아이에게 도움을 요청하는 건 이상해요. 거절하고 안전한 곳으로 가요."
+    },
+    {
+      situation: "낯선 사람이 사탕이나 선물을 주면서 같이 가자고 해요.",
+      options: [
+        { text: "\"안돼요!\"라고 크게 말하고 어른에게 알린다", correct: true, label: "📢 안돼요 외치기" },
+        { text: "선물이 좋아서 따라간다", correct: false, label: "🍬 선물 받고 따라가기" },
+        { text: "조용히 선물만 받고 자리를 뜬다", correct: false, label: "🤫 조용히 받기" }
+      ],
+      hint: "낯선 사람의 선물은 거절하고 큰 소리로 도움을 요청해야 해요."
+    },
+    {
+      situation: "마트에서 부모님을 잃어버렸어요. 어떻게 해야 할까요?",
+      options: [
+        { text: "그 자리에서 기다리거나 계산대 직원에게 도움을 요청한다", correct: true, label: "🙋 직원에게 도움 요청" },
+        { text: "이곳저곳 혼자 돌아다니며 찾는다", correct: false, label: "🚶 혼자 돌아다니기" },
+        { text: "마트 밖으로 나가서 찾아본다", correct: false, label: "🚪 밖으로 나가기" }
+      ],
+      hint: "그 자리에서 기다리거나 직원에게 도움을 요청해야 부모님과 다시 만날 수 있어요."
+    },
+    {
+      situation: "낯선 사람이 \"너희 엄마가 다쳐서 병원에 있어, 같이 가자\"라고 해요.",
+      options: [
+        { text: "믿지 않고 그 자리에서 다른 어른(경찰, 직원)에게 확인을 요청한다", correct: true, label: "🙋 다른 어른께 확인" },
+        { text: "놀라서 바로 따라간다", correct: false, label: "😱 바로 따라가기" },
+        { text: "혼자 병원을 찾아 나선다", correct: false, label: "🏃 혼자 병원 찾기" }
+      ],
+      hint: "낯선 사람의 말만 듣고 따라가면 안 돼요. 믿을 수 있는 어른에게 꼭 확인해요."
+    },
+    {
+      situation: "놀이터에서 혼자 노는데 낯선 사람이 자꾸 말을 걸어요.",
+      options: [
+        { text: "대답하지 않고 사람 많은 곳으로 이동해 어른에게 알린다", correct: true, label: "🚶 사람 많은 곳으로" },
+        { text: "계속 대화를 나눈다", correct: false, label: "💬 계속 대화하기" },
+        { text: "사람이 없는 다른 곳으로 혼자 이동한다", correct: false, label: "🙅 조용한 곳으로 이동" }
+      ],
+      hint: "낯선 사람이 자꾸 말을 걸면 사람 많은 곳으로 가서 어른에게 알려야 해요."
+    },
+    {
+      situation: "누군가 손을 잡아끌며 차에 타라고 해요.",
+      options: [
+        { text: "큰 소리로 \"안돼요! 도와주세요!\"라고 외치며 벗어난다", correct: true, label: "📢 소리치며 벗어나기" },
+        { text: "무서워서 조용히 따라간다", correct: false, label: "😨 조용히 따라가기" },
+        { text: "아무 말 없이 버티기만 한다", correct: false, label: "🤐 조용히 버티기" }
+      ],
+      hint: "큰 소리로 도움을 요청해야 주변 사람들이 알아차리고 도와줄 수 있어요."
+    },
+    {
+      situation: "밖에서 길을 잃어버렸어요. 미리 알아두면 도움이 되는 것은 무엇일까요?",
+      options: [
+        { text: "부모님 전화번호와 집 주소를 외워둔다", correct: true, label: "📞 전화번호·주소 외우기" },
+        { text: "몰라도 괜찮다고 생각한다", correct: false, label: "🤷 몰라도 괜찮기" },
+        { text: "처음 만난 낯선 사람에게 무조건 다 알려준다", correct: false, label: "🗣️ 낯선 사람에게 다 알리기" }
+      ],
+      hint: "부모님 연락처와 집 주소를 알고 있으면 길을 잃어도 도움을 받기 쉬워요."
+    },
+    {
+      situation: "길을 잃었을 때 안전하게 도움을 요청할 수 있는 어른은 누구일까요?",
+      options: [
+        { text: "경찰관이나 이름표를 단 가게 직원 같은 안전한 어른", correct: true, label: "👮 경찰관·직원에게" },
+        { text: "처음 만난 아무 사람", correct: false, label: "🙋 아무나에게" },
+        { text: "혼자 있는 낯선 어른", correct: false, label: "🚶 혼자 있는 낯선 어른" }
+      ],
+      hint: "경찰관이나 가게 직원처럼 신분이 확실한 어른에게 도움을 요청해야 안전해요."
+    },
+    {
+      situation: "집에 혼자 있는데 낯선 사람이 문 앞에서 \"택배 왔어요, 문 열어주세요\"라고 해요.",
+      options: [
+        { text: "문을 열지 않고 부모님께 전화로 먼저 확인한다", correct: true, label: "📞 부모님께 확인" },
+        { text: "바로 문을 열어준다", correct: false, label: "🚪 바로 문 열기" },
+        { text: "문틈으로 손을 내밀어 물건을 받는다", correct: false, label: "🖐️ 문틈으로 받기" }
+      ],
+      hint: "부모님이 안 계실 땐 낯선 사람에게 절대 문을 열어주면 안 돼요."
+    },
+    {
+      situation: "신변보호를 위해 평소에 연습해두면 좋은 것은 무엇일까요?",
+      options: [
+        { text: "\"싫어요, 안돼요, 도와주세요\"를 큰 소리로 말하는 연습", correct: true, label: "📢 큰 소리 연습하기" },
+        { text: "낯선 사람에게도 항상 예의바르게 따라가는 연습", correct: false, label: "🙇 따라가는 연습" },
+        { text: "무슨 일이든 혼자 해결하는 연습", correct: false, label: "🙅 혼자 해결 연습" }
+      ],
+      hint: "위험할 때 큰 소리로 도움을 요청하는 연습을 평소에 해두면 실제 상황에서 도움이 돼요."
+    }
+  ];
+
+  var QUESTIONS_STAGE7 = [
+    {
+      situation: "집에서 가스 냄새가 나요. 제일 먼저 해야 할 일은 무엇일까요?",
+      options: [
+        { text: "창문을 열어 환기하고 가스 밸브를 잠근 뒤 어른에게 알린다", correct: true, label: "🪟 환기하고 밸브 잠그기" },
+        { text: "불을 켜서 냄새의 원인을 확인해본다", correct: false, label: "🔥 불 켜서 확인하기" },
+        { text: "신경 쓰지 않고 그냥 지낸다", correct: false, label: "🙅 신경 안 쓰기" }
+      ],
+      hint: "가스 냄새가 나면 불을 켜지 말고 환기부터 한 뒤 어른에게 알려야 해요."
+    },
+    {
+      situation: "손에 물기가 있는 채로 전기 플러그를 꽂으려고 해요.",
+      options: [
+        { text: "손을 마른 수건으로 닦은 뒤 어른에게 부탁한다", correct: true, label: "🧻 손 닦고 어른께 부탁" },
+        { text: "젖은 손으로 그냥 꽂는다", correct: false, label: "💧 젖은 손으로 꽂기" },
+        { text: "신경 쓰지 않고 빨리 꽂는다", correct: false, label: "⚡ 빨리 꽂기" }
+      ],
+      hint: "젖은 손으로 전기제품을 만지면 감전될 수 있어서 아주 위험해요."
+    },
+    {
+      situation: "멀티탭(콘센트)에 플러그를 여러 개 한꺼번에 꽂으려고 해요.",
+      options: [
+        { text: "너무 많이 꽂지 않고 어른에게 확인을 부탁한다", correct: true, label: "🙋 어른께 확인 부탁" },
+        { text: "꽂을 수 있는 만큼 다 꽂는다", correct: false, label: "🔌 다 꽂기" },
+        { text: "아무렇게나 꽂아 놓는다", correct: false, label: "🙅 아무렇게나 꽂기" }
+      ],
+      hint: "한 곳에 너무 많이 꽂으면 과열되어 불이 날 수 있어요."
+    },
+    {
+      situation: "요리 중 가스레인지 불꽃이 옷에 닿을 뻔했어요.",
+      options: [
+        { text: "불에서 멀리 떨어져 어른에게 도와달라고 한다", correct: true, label: "🙋 어른께 도움 요청" },
+        { text: "혼자 불을 끄려고 손을 뻗는다", correct: false, label: "✋ 혼자 불 끄기" },
+        { text: "그냥 계속 요리한다", correct: false, label: "🍳 계속 요리하기" }
+      ],
+      hint: "불 근처에서는 항상 조심하고, 위험하면 바로 어른에게 도움을 요청해야 해요."
+    },
+    {
+      situation: "전선이 벗겨져 속에 있는 선이 보이는 걸 발견했어요.",
+      options: [
+        { text: "만지지 않고 어른에게 바로 알린다", correct: true, label: "🙋 어른께 바로 알리기" },
+        { text: "궁금해서 손으로 만져본다", correct: false, label: "👆 손으로 만져보기" },
+        { text: "테이프로 혼자 감아본다", correct: false, label: "🩹 혼자 테이프 감기" }
+      ],
+      hint: "벗겨진 전선은 감전 위험이 있어요. 만지지 말고 어른에게 알려야 해요."
+    },
+    {
+      situation: "콘센트 구멍에 젓가락이나 손가락을 넣어보고 싶어져요.",
+      options: [
+        { text: "절대 넣지 않는다", correct: true, label: "🙅 절대 넣지 않기" },
+        { text: "살짝만 넣어본다", correct: false, label: "🥢 살짝 넣어보기" },
+        { text: "친구에게 넣어보라고 한다", correct: false, label: "👉 친구에게 시키기" }
+      ],
+      hint: "콘센트 구멍에 무언가를 넣으면 크게 감전될 수 있어서 절대 안 돼요."
+    },
+    {
+      situation: "욕실에서 헤어드라이기를 쓰다가 물이 튀었어요.",
+      options: [
+        { text: "바로 전원을 끄고 어른에게 알린다", correct: true, label: "🔌 전원 끄고 알리기" },
+        { text: "그냥 계속 사용한다", correct: false, label: "💨 계속 사용하기" },
+        { text: "물기를 닦지 않고 다시 켠다", correct: false, label: "🔄 그냥 다시 켜기" }
+      ],
+      hint: "물기가 있는 곳에서 전기제품을 쓰면 감전될 수 있어 아주 위험해요."
+    },
+    {
+      situation: "가스레인지를 다 쓰고 난 뒤 꼭 확인해야 할 것은 무엇일까요?",
+      options: [
+        { text: "불이 완전히 꺼졌는지, 밸브가 잠겼는지 확인한다", correct: true, label: "🔥 불·밸브 확인하기" },
+        { text: "확인 없이 바로 자리를 떠난다", correct: false, label: "🚶 바로 떠나기" },
+        { text: "불이 켜진 채로 나간다", correct: false, label: "🙅 켜진 채로 나가기" }
+      ],
+      hint: "가스레인지를 쓴 뒤에는 불과 밸브를 꼭 확인해야 안전해요."
+    },
+    {
+      situation: "전기 코드를 콘센트에서 뽑을 때 올바른 방법은 무엇일까요?",
+      options: [
+        { text: "코드(플러그) 머리 부분을 잡고 뽑는다", correct: true, label: "🔌 플러그 머리 잡기" },
+        { text: "전선을 잡아당겨 뽑는다", correct: false, label: "🧵 전선 잡아당기기" },
+        { text: "발로 밟아서 뽑는다", correct: false, label: "🦶 발로 밟기" }
+      ],
+      hint: "전선을 잡아당기면 선이 끊어져 위험할 수 있어요. 플러그 머리를 잡고 뽑아요."
+    },
+    {
+      situation: "집에서 가스·전기를 안전하게 쓰기 위해 지켜야 할 습관은 무엇일까요?",
+      options: [
+        { text: "이상한 냄새나 소리가 나면 바로 어른에게 알린다", correct: true, label: "🙋 바로 어른께 알리기" },
+        { text: "이상해도 혼자 해결하려 한다", correct: false, label: "🙅 혼자 해결하기" },
+        { text: "무시하고 그냥 계속 사용한다", correct: false, label: "🤐 무시하고 사용하기" }
+      ],
+      hint: "이상한 낌새를 느끼면 혼자 해결하지 말고 꼭 어른에게 바로 알려야 해요."
+    }
+  ];
+
   var STAGES = [
     {
       key: "stage1",
@@ -868,6 +1230,22 @@
       shortTitle: "첨벙첨벙! 물놀이 안전 훈련",
       desc: "물놀이할 때 안전하게 즐기는 법을 배워요",
       questions: QUESTIONS_STAGE5
+    },
+    {
+      key: "stage6",
+      emoji: "🧭",
+      mapTitle: "6화 · 조심조심! 낯선 사람 대처 훈련",
+      shortTitle: "조심조심! 낯선 사람 대처 훈련",
+      desc: "낯선 사람과 실종 상황에서 안전하게 행동해요",
+      questions: QUESTIONS_STAGE6
+    },
+    {
+      key: "stage7",
+      emoji: "🔌",
+      mapTitle: "7화 · 번쩍번쩍! 가스·전기 안전 훈련",
+      shortTitle: "번쩍번쩍! 가스·전기 안전 훈련",
+      desc: "가스와 전기를 안전하게 다뤄요",
+      questions: QUESTIONS_STAGE7
     }
   ];
 
@@ -883,7 +1261,8 @@
     danger: 100,
     calm: 100,
     firstTryCorrect: 0,
-    triedThisQuestion: false
+    triedThisQuestion: false,
+    correctCount: 0
   };
 
   var typewriterTimer = null;
@@ -1015,10 +1394,11 @@
     state.calm = 100;
     state.firstTryCorrect = 0;
     state.triedThisQuestion = false;
+    state.correctCount = 0;
     $("battle-stage-title").textContent = stage.emoji + " " + stage.shortTitle;
     $("situation-emoji").textContent = stage.emoji;
     showScreen("screen-battle");
-    renderQuestion();
+    triggerStoryEvent("before_first_question", renderQuestion);
   }
 
   function renderQuestion(){
@@ -1055,7 +1435,9 @@
     }
 
     setTimeout(function(){
-      var fullText = q.situation + "\n\n리틀 히어로는 무엇을 할까요?";
+      var name = playerName();
+      var greeting = state.qIndex === 0 ? (name + ", 지금 위험 상황이 발생했어!\n\n") : "";
+      var fullText = greeting + q.situation + "\n\n" + name + ", 무엇을 해야 할까?";
       typeText($("situation-text"), fullText, 26, function(){
         arrow.classList.add("visible");
         setOptionsDisabled(false);
@@ -1082,6 +1464,7 @@
     if(opt.correct){
       btn.classList.add("correct");
       emoji.classList.add("zap");
+      state.correctCount++;
       if(!state.triedThisQuestion){
         state.firstTryCorrect++;
       }
@@ -1089,12 +1472,14 @@
       updateGauge();
       state.calm = Math.min(100, state.calm + CALM_STEP);
       updateCalmGauge();
-      typeText($("situation-text"), "정답이에요! 위험도가 줄었어요.", 26);
+      typeText($("situation-text"), "역시 잘했어, " + playerName() + "! 위험도가 줄었어요.", 26);
 
       setTimeout(function(){
         state.qIndex++;
         if(state.qIndex >= state.total){
-          finishStage();
+          triggerStoryEvent("before_clear", finishStage);
+        } else if(state.correctCount === 3){
+          triggerStoryEvent("after_correct_3", renderQuestion);
         } else {
           renderQuestion();
         }
@@ -1109,7 +1494,7 @@
       state.calm = Math.max(0, state.calm - CALM_STEP);
       updateCalmGauge();
       var q = STAGES[state.stageIndex].questions[state.qIndex];
-      typeText($("situation-text"), "침착함을 유지했어요. 다시 생각해볼까요?\n\n힌트: " + q.hint, 22, function(){
+      typeText($("situation-text"), playerName() + ", 침착함을 유지했어요. 다시 생각해볼까요?\n\n힌트: " + q.hint, 22, function(){
         $("dialogue-arrow").classList.add("visible");
       });
 
@@ -1135,9 +1520,87 @@
     showScreen("screen-clear");
   }
 
+  function refreshMainButtons(){
+    var introDone = !!profile.introCompleted;
+    $("btn-start").style.display = introDone ? "none" : "block";
+    $("btn-continue").style.display = introDone ? "block" : "none";
+    $("btn-restart-intro").style.display = introDone ? "block" : "none";
+  }
+
+  function startIntroDialogue(){
+    $("btn-intro-next").disabled = true;
+    $("intro-arrow").classList.remove("visible");
+    typeText($("intro-text"), DODAM_INTRO_TEXT, 26, function(){
+      $("intro-arrow").classList.add("visible");
+      $("btn-intro-next").disabled = false;
+    });
+  }
+
+  function startWelcomeDialogue(){
+    $("btn-welcome-next").disabled = true;
+    var text = "좋아, " + playerName() + "!\n오늘부터 너는 리틀 히어로 아카데미의 신입 히어로야.";
+    typeText($("welcome-text"), text, 26, function(){
+      $("btn-welcome-next").disabled = false;
+    });
+  }
+
   $("btn-start").addEventListener("click", function(){
+    showScreen("screen-intro");
+    startIntroDialogue();
+  });
+  $("btn-continue").addEventListener("click", function(){
     refreshMapScreen();
     showScreen("screen-map");
+  });
+  $("btn-restart-intro").addEventListener("click", function(){
+    profile.playerName = "";
+    profile.playerGender = null;
+    profile.introCompleted = false;
+    saveProfile();
+    refreshMainButtons();
+    showScreen("screen-intro");
+    startIntroDialogue();
+  });
+  $("btn-intro-next").addEventListener("click", function(){
+    showScreen("screen-gender");
+  });
+  $("btn-gender-boy").addEventListener("click", function(){
+    profile.playerGender = "boy";
+    saveProfile();
+    $("name-input").value = profile.playerName || "";
+    $("name-warning").style.visibility = "hidden";
+    showScreen("screen-name");
+  });
+  $("btn-gender-girl").addEventListener("click", function(){
+    profile.playerGender = "girl";
+    saveProfile();
+    $("name-input").value = profile.playerName || "";
+    $("name-warning").style.visibility = "hidden";
+    showScreen("screen-name");
+  });
+  $("btn-name-next").addEventListener("click", function(){
+    var val = $("name-input").value.trim();
+    if(!val){
+      $("name-warning").style.visibility = "visible";
+      return;
+    }
+    profile.playerName = val;
+    saveProfile();
+    showScreen("screen-welcome");
+    startWelcomeDialogue();
+  });
+  $("btn-welcome-next").addEventListener("click", function(){
+    profile.introCompleted = true;
+    saveProfile();
+    refreshMainButtons();
+    refreshMapScreen();
+    showScreen("screen-map");
+  });
+  $("btn-event-continue").addEventListener("click", function(){
+    var cb = pendingEventContinue;
+    pendingEventContinue = null;
+    showScreen("screen-battle");
+    if(cb) cb();
   });
   $("btn-map-back").addEventListener("click", function(){
     refreshMainScreen();
@@ -1158,6 +1621,7 @@
   });
 
   refreshMainScreen();
+  refreshMainButtons();
 })();
 </script>
 </body>
