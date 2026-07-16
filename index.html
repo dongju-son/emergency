@@ -174,6 +174,22 @@
   }
 
   .hero-emoji-battle{font-size:3.1rem;line-height:1;}
+  .hero-emoji-battle.hero-boy{filter:drop-shadow(0 0 6px rgba(76,201,240,.6));}
+  .hero-emoji-battle.hero-girl{filter:drop-shadow(0 0 6px rgba(255,143,163,.6));}
+
+  /* 플레이어 캐릭터 표시 칩 */
+  .player-chip{
+    display:inline-flex;align-items:center;gap:.4rem;
+    background:var(--card);
+    border:2px solid #3a4a90;
+    border-radius:999px;
+    padding:.35rem .9rem;
+    font-size:.85rem;font-weight:700;
+    margin-bottom:.9rem;
+  }
+  .player-chip.hero-boy{border-color:#4cc9f0;}
+  .player-chip.hero-girl{border-color:#ff8fa3;}
+  .player-chip-emoji{font-size:1.3rem;}
 
   .dialogue-box{
     position:relative;
@@ -266,7 +282,7 @@
   }
   .badge-region.colored{stroke-dasharray:none;stroke:#1c1c2e;}
 
-  /* 도담박사 인트로 / 캐릭터 생성 */
+  /* 안전박사 인트로 / 캐릭터 생성 */
   .text-input{
     width:100%;
     padding:.9rem 1rem;
@@ -308,7 +324,7 @@
 
   <!-- 메인 화면 -->
   <section class="screen active" id="screen-main">
-    <div class="hero-emoji">🦸‍♀️🚒</div>
+    <div class="hero-emoji"><span id="main-hero-emoji">🦸</span>🚒</div>
     <h1>긴급출동!<br>리틀 히어로 아카데미</h1>
     <p class="subtitle">위험한 상황에 안전 행동으로 씩씩하게 맞서요!</p>
     <div class="progress-summary" id="main-progress" style="display:none;"></div>
@@ -317,7 +333,7 @@
     <button class="btn btn-ghost" id="btn-restart-intro" style="display:none;">처음부터 다시</button>
   </section>
 
-  <!-- 도담박사 인트로 -->
+  <!-- 안전박사 인트로 -->
   <section class="screen" id="screen-intro">
     <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
     <div class="dialogue-box">
@@ -335,8 +351,8 @@
 너는 어떤 리틀 히어로로 시작하고 싶니?</div>
     </div>
     <div class="gender-options">
-      <div class="gender-card" id="btn-gender-boy"><span class="gender-emoji">🦸‍♂️</span>남자아이 히어로</div>
-      <div class="gender-card" id="btn-gender-girl"><span class="gender-emoji">🦸‍♀️</span>여자아이 히어로</div>
+      <div class="gender-card" id="btn-gender-boy"></div>
+      <div class="gender-card" id="btn-gender-girl"></div>
     </div>
   </section>
 
@@ -352,7 +368,7 @@
     <button class="btn btn-primary" id="btn-name-next">확인</button>
   </section>
 
-  <!-- 도담박사 입학 선언 -->
+  <!-- 안전박사 입학 선언 -->
   <section class="screen" id="screen-welcome">
     <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
     <div class="dialogue-box">
@@ -361,11 +377,44 @@
     <button class="btn btn-primary" id="btn-welcome-next" disabled>모험 시작하기</button>
   </section>
 
+  <!-- 안전본부 선택 -->
+  <section class="screen" id="screen-hq">
+    <div class="map-header">
+      <h1 style="font-size:1.3rem;">🏢 리틀 히어로 타운 안전본부</h1>
+      <p class="subtitle">어느 안전본부의 미션을 시작할까?</p>
+    </div>
+    <div class="player-chip" id="hq-player-chip"></div>
+    <div class="stage-list">
+      <div class="stage-card unlocked" id="hq-fire-card">
+        <div class="stage-emoji">🚒</div>
+        <div class="stage-info">
+          <div class="stage-title">소방 안전본부</div>
+          <div class="stage-desc">불과 연기, 재난 상황에서 침착하게 행동하는 법을 배워보자.</div>
+        </div>
+      </div>
+      <div class="stage-card locked" id="hq-police-card">
+        <div class="stage-emoji">🚓</div>
+        <div class="stage-info">
+          <div class="stage-title">경찰 안전본부</div>
+          <div class="stage-desc">낯선 사람, 길 잃음, 교통안전을 배우는 미션이 곧 열려요.</div>
+        </div>
+      </div>
+      <div class="stage-card locked" id="hq-medical-card">
+        <div class="stage-emoji">🚑</div>
+        <div class="stage-info">
+          <div class="stage-title">구급 안전본부</div>
+          <div class="stage-desc">다친 친구를 돕고 119에 신고하는 법을 배우는 미션이 곧 열려요.</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-ghost" id="btn-hq-back">메인으로</button>
+  </section>
+
   <!-- 사건 지도 -->
   <section class="screen" id="screen-map">
     <div class="map-header">
       <h1 style="font-size:1.3rem;">🗺️ 사건 지도</h1>
-      <p class="subtitle">출동할 사건을 골라주세요</p>
+      <p class="subtitle">소방 안전본부에서 출동할 사건을 골라주세요</p>
     </div>
     <div class="stage-list">
       <div class="stage-card" id="stage-1-card">
@@ -425,7 +474,7 @@
         </div>
       </div>
     </div>
-    <button class="btn btn-ghost" id="btn-map-back">메인으로</button>
+    <button class="btn btn-ghost" id="btn-map-back">본부 목록으로</button>
   </section>
 
   <!-- 배틀 화면 -->
@@ -448,9 +497,9 @@
       </div>
 
       <div class="combatant-row hero-row">
-        <div class="hero-emoji-battle">🦸‍♀️</div>
+        <div class="hero-emoji-battle" id="hero-avatar-emoji">🦸</div>
         <div class="combatant-panel hero-panel">
-          <div class="combatant-name">리틀 히어로</div>
+          <div class="combatant-name" id="hero-combatant-name">리틀 히어로</div>
           <div class="gauge-wrap">
             <div class="gauge-label"><span>침착함</span><span id="calm-percent">100%</span></div>
             <div class="gauge-bar"><div class="gauge-fill calm-fill" id="calm-fill"></div></div>
@@ -467,7 +516,7 @@
     <div class="options" id="options"></div>
   </section>
 
-  <!-- 도담박사 이벤트 -->
+  <!-- 안전박사 이벤트 -->
   <section class="screen" id="screen-event">
     <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
     <div class="dialogue-box">
@@ -511,6 +560,7 @@
     <div class="dialogue-box">
       <div class="dialogue-text" id="badge-done-text"></div>
     </div>
+    <div class="player-chip" id="badge-done-chip"></div>
     <button class="btn btn-primary" id="btn-badge-continue">계속하기</button>
   </section>
 
@@ -519,6 +569,7 @@
     <div class="clear-emoji">🏅</div>
     <h1>임무 완료!</h1>
     <p class="subtitle">리틀 히어로가 마을을 안전하게 지켰어요</p>
+    <div class="player-chip" id="clear-player-chip"></div>
     <div class="stars-big" id="clear-stars">⭐⭐⭐</div>
     <div class="stat-card">
       처음 만에 맞힌 문제 <b id="clear-firsttry">10</b> / <span id="clear-total">10</span>개
@@ -535,9 +586,85 @@
 
   var PROFILE_KEY = "lha_profile";
   var BADGE_KEY = "heroBadgeColors";
+  var EARNED_BADGES_KEY = "earnedBadges";
 
   var selectedBadgeColor = null;
   var badgeColors = { frame: null, face: null, star: null, ribbonLeft: null, ribbonRight: null };
+
+  // 캐릭터 정보는 여기 한 곳에서만 관리한다. 화면에서는 직접 이모지를 쓰지 않고
+  // getCurrentPlayerProfile()을 통해 가져온다. 도트 이미지 도입 전까지는
+  // 이모지 실루엣 + 강조색 + 장비 아이콘으로 성별 구분을 표현한다.
+  var playerProfiles = {
+    boy: {
+      label: "남자아이 히어로",
+      emoji: "🦸‍♂️",
+      className: "hero-boy",
+      badgeIcon: "🛡️",
+      description: "침착하게 위험을 살피는 리틀 히어로"
+    },
+    girl: {
+      label: "여자아이 히어로",
+      emoji: "🦸‍♀️",
+      className: "hero-girl",
+      badgeIcon: "⭐",
+      description: "용기 있게 안전 행동을 고르는 리틀 히어로"
+    }
+  };
+
+  function getCurrentPlayerProfile(){
+    // playerGender가 없거나 알 수 없는 값이면 임시로 girl을 기본값으로 사용한다.
+    // (원칙적으로는 캐릭터 선택을 마치지 않은 사용자는 screen-gender로 보내
+    // 이 기본값에 의존하지 않도록 처리했다 — goToMissionHub() 참고)
+    return playerProfiles[profile.playerGender] || playerProfiles.girl;
+  }
+
+  function renderPlayerChip(el){
+    if(!el) return;
+    var p = getCurrentPlayerProfile();
+    el.classList.remove("hero-boy", "hero-girl");
+    el.classList.add(p.className);
+    el.textContent = "";
+    var emojiSpan = document.createElement("span");
+    emojiSpan.className = "player-chip-emoji";
+    emojiSpan.textContent = p.emoji;
+    var nameSpan = document.createElement("span");
+    nameSpan.textContent = playerName();
+    el.appendChild(emojiSpan);
+    el.appendChild(nameSpan);
+  }
+
+  function renderGenderOptions(){
+    ["boy", "girl"].forEach(function(key){
+      var card = $("btn-gender-" + key);
+      var p = playerProfiles[key];
+      card.textContent = "";
+      var emojiSpan = document.createElement("span");
+      emojiSpan.className = "gender-emoji";
+      emojiSpan.textContent = p.emoji;
+      card.appendChild(emojiSpan);
+      card.appendChild(document.createTextNode(p.label));
+    });
+  }
+
+  function loadEarnedBadges(){
+    try{
+      return JSON.parse(localStorage.getItem(EARNED_BADGES_KEY)) || [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function hasEarnedBadge(id){
+    return loadEarnedBadges().indexOf(id) !== -1;
+  }
+
+  function addEarnedBadge(id){
+    var badges = loadEarnedBadges();
+    if(badges.indexOf(id) === -1){
+      badges.push(id);
+      localStorage.setItem(EARNED_BADGES_KEY, JSON.stringify(badges));
+    }
+  }
 
   function loadProfile(){
     try{
@@ -557,27 +684,31 @@
     return profile.playerName || "리틀 히어로";
   }
 
-  var DODAM_INTRO_TEXT = "안녕! 나는 리틀 히어로 아카데미의 도담박사란다.\n\n이곳에서는 위험한 순간을 이겨내는 방법을 배우지.\n힘이 센 아이가 히어로가 되는 게 아니야.\n위험을 알아차리고, 안전하게 행동하는 아이가 진짜 히어로란다.";
+  var SAFETY_PROFESSOR_INTRO_TEXT = "안녕! 나는 리틀 히어로 아카데미의 안전박사란다.\n\n이곳은 위험한 순간에 어떻게 행동해야 하는지 배우는 곳이야.\n\n그리고 이 아카데미 밖에는 리틀 히어로 타운이 있지.\n그곳에는 경찰 안전본부, 소방 안전본부, 구급 안전본부가 있단다.\n\n오늘부터 너는 이 마을의 신입 리틀 히어로야.\n여러 안전본부의 미션을 해결하며 진짜 안전대장으로 성장해보자!";
 
+  // hq 필드는 나중에 경찰/소방/구급 본부별 이벤트를 구분해 추가할 때 쓰는 용도.
+  // 지금은 트리거 매칭에 쓰이진 않지만, 본부별 이벤트가 늘어나면
+  // triggerStoryEvent에 hq 조건을 추가해 필터링하면 된다.
   var storyEvents = [
     {
       id: "intro_hint",
       trigger: "before_first_question",
-      speaker: "도담박사",
-      text: "잠깐, {playerName}! 위험한 상황에서는 먼저 주변을 살피는 게 중요하단다.",
+      hq: "fire",
+      speaker: "안전박사",
+      text: "잠깐, {playerName}! 소방 안전본부 미션에서는 먼저 주변을 살피는 게 중요하단다.",
       shown: false
     },
     {
       id: "mid_encouragement",
       trigger: "after_correct_3",
-      speaker: "도담박사",
-      text: "좋아, {playerName}. 히어로는 빠르게 움직이는 사람보다 침착하게 판단하는 사람이란다.",
+      speaker: "안전박사",
+      text: "좋아, {playerName}. 안전대장은 빠르게 움직이는 사람보다 침착하게 판단하는 사람이란다.",
       shown: false
     },
     {
       id: "before_clear_cheer",
       trigger: "before_clear",
-      speaker: "도담박사",
+      speaker: "안전박사",
       text: "이제 거의 다 왔어. 마지막까지 안전하게 판단해보자!",
       shown: false
     }
@@ -589,7 +720,7 @@
 
   var pendingEventContinue = null;
 
-  function showDodamEvent(text, onContinue){
+  function showSafetyProfessorEvent(text, onContinue){
     pendingEventContinue = onContinue;
     showScreen("screen-event");
     typeText($("event-text"), fillTemplate(text));
@@ -608,7 +739,7 @@
       return;
     }
     ev.shown = true;
-    showDodamEvent(ev.text, onContinue);
+    showSafetyProfessorEvent(ev.text, onContinue);
   }
 
   var QUESTIONS_STAGE1 = [
@@ -1269,7 +1400,9 @@
       mapTitle: "1화 · 불이야! 소방 출동 훈련",
       shortTitle: "불이야! 소방 출동 훈련",
       desc: "불이 난 상황에서 안전하게 대피해요",
-      questions: QUESTIONS_STAGE1
+      questions: QUESTIONS_STAGE1,
+      badgeId: "fire",
+      badgeName: "소방"
     },
     {
       key: "stage2",
@@ -1469,8 +1602,18 @@
     state.correctCount = 0;
     $("battle-stage-title").textContent = stage.emoji + " " + stage.shortTitle;
     $("situation-emoji").textContent = stage.emoji;
+    refreshBattleAvatar();
     showScreen("screen-battle");
     triggerStoryEvent("before_first_question", renderQuestion);
+  }
+
+  function refreshBattleAvatar(){
+    var p = getCurrentPlayerProfile();
+    var avatar = $("hero-avatar-emoji");
+    avatar.textContent = p.emoji;
+    avatar.classList.remove("hero-boy", "hero-girl");
+    avatar.classList.add(p.className);
+    $("hero-combatant-name").textContent = playerName();
   }
 
   function renderQuestion(){
@@ -1588,8 +1731,10 @@
     $("clear-stars").textContent = starString(stars);
     $("clear-firsttry").textContent = state.firstTryCorrect;
     $("clear-total").textContent = state.total;
+    renderPlayerChip($("clear-player-chip"));
 
-    if(state.stageIndex === 0 && !localStorage.getItem(BADGE_KEY)){
+    var stage = STAGES[state.stageIndex];
+    if(stage.badgeId && !hasEarnedBadge(stage.badgeId)){
       showBadgeIntro();
     } else {
       showScreen("screen-clear");
@@ -1609,7 +1754,8 @@
   function showBadgeIntro(){
     showScreen("screen-badge-intro");
     $("btn-badge-start").disabled = true;
-    var text = "잘했어, " + playerName() + "! 이제 너만의 히어로 배지를 완성할 시간이야.\n세 가지 색으로 안전 히어로 배지를 칠해보자!";
+    var badgeName = STAGES[state.stageIndex].badgeName || "히어로";
+    var text = "잘했어, " + playerName() + "! 이제 " + badgeName + " 배지를 색칠할 시간이야.\n세 가지 색으로 너만의 배지를 완성해보자!";
     typeText($("badge-intro-text"), text, 26, function(){
       $("btn-badge-start").disabled = false;
     });
@@ -1626,12 +1772,28 @@
     $("btn-start").style.display = introDone ? "none" : "block";
     $("btn-continue").style.display = introDone ? "block" : "none";
     $("btn-restart-intro").style.display = introDone ? "block" : "none";
+    $("main-hero-emoji").textContent = profile.playerGender ? getCurrentPlayerProfile().emoji : "🦸";
+  }
+
+  // 캐릭터 선택(성별)과 이름을 아직 안 정한 사용자는 본부 화면 대신
+  // 해당 단계로 되돌려 보낸다 (게임 화면에 미완성 상태로 들어가지 않도록).
+  function goToMissionHub(){
+    if(!profile.playerGender){
+      showScreen("screen-gender");
+      return;
+    }
+    if(!profile.playerName){
+      showScreen("screen-name");
+      return;
+    }
+    renderPlayerChip($("hq-player-chip"));
+    showScreen("screen-hq");
   }
 
   function startIntroDialogue(){
     $("btn-intro-next").disabled = true;
     $("intro-arrow").classList.remove("visible");
-    typeText($("intro-text"), DODAM_INTRO_TEXT, 26, function(){
+    typeText($("intro-text"), SAFETY_PROFESSOR_INTRO_TEXT, 26, function(){
       $("intro-arrow").classList.add("visible");
       $("btn-intro-next").disabled = false;
     });
@@ -1639,7 +1801,7 @@
 
   function startWelcomeDialogue(){
     $("btn-welcome-next").disabled = true;
-    var text = "좋아, " + playerName() + "!\n오늘부터 너는 리틀 히어로 아카데미의 신입 히어로야.";
+    var text = "좋아, " + playerName() + "!\n오늘부터 너는 리틀 히어로 타운의 신입 리틀 히어로야!";
     typeText($("welcome-text"), text, 26, function(){
       $("btn-welcome-next").disabled = false;
     });
@@ -1650,8 +1812,7 @@
     startIntroDialogue();
   });
   $("btn-continue").addEventListener("click", function(){
-    refreshMapScreen();
-    showScreen("screen-map");
+    goToMissionHub();
   });
   $("btn-restart-intro").addEventListener("click", function(){
     profile.playerName = "";
@@ -1665,19 +1826,14 @@
   $("btn-intro-next").addEventListener("click", function(){
     showScreen("screen-gender");
   });
-  $("btn-gender-boy").addEventListener("click", function(){
-    profile.playerGender = "boy";
-    saveProfile();
-    $("name-input").value = profile.playerName || "";
-    $("name-warning").style.visibility = "hidden";
-    showScreen("screen-name");
-  });
-  $("btn-gender-girl").addEventListener("click", function(){
-    profile.playerGender = "girl";
-    saveProfile();
-    $("name-input").value = profile.playerName || "";
-    $("name-warning").style.visibility = "hidden";
-    showScreen("screen-name");
+  ["boy", "girl"].forEach(function(genderKey){
+    $("btn-gender-" + genderKey).addEventListener("click", function(){
+      profile.playerGender = genderKey;
+      saveProfile();
+      $("name-input").value = profile.playerName || "";
+      $("name-warning").style.visibility = "hidden";
+      showScreen("screen-name");
+    });
   });
   $("btn-name-next").addEventListener("click", function(){
     var val = $("name-input").value.trim();
@@ -1694,8 +1850,7 @@
     profile.introCompleted = true;
     saveProfile();
     refreshMainButtons();
-    refreshMapScreen();
-    showScreen("screen-map");
+    goToMissionHub();
   });
   $("btn-event-continue").addEventListener("click", function(){
     var cb = pendingEventContinue;
@@ -1723,16 +1878,30 @@
   });
   $("btn-badge-done").addEventListener("click", function(){
     localStorage.setItem(BADGE_KEY, JSON.stringify(badgeColors));
+    var stage = STAGES[state.stageIndex];
+    if(stage.badgeId){
+      addEarnedBadge(stage.badgeId);
+    }
     showScreen("screen-badge-done");
-    var text = "멋지다, " + playerName() + "! 정말 멋진 히어로 배지가 완성됐어!";
+    renderPlayerChip($("badge-done-chip"));
+    var badgeName = stage.badgeName || "히어로";
+    var text = "축하해, " + playerName() + "!\n" + badgeName + " 안전본부 미션을 해결하고 " + badgeName + " 배지를 획득했어.";
     typeText($("badge-done-text"), text, 26);
   });
   $("btn-badge-continue").addEventListener("click", function(){
     showScreen("screen-clear");
   });
   $("btn-map-back").addEventListener("click", function(){
+    renderPlayerChip($("hq-player-chip"));
+    showScreen("screen-hq");
+  });
+  $("btn-hq-back").addEventListener("click", function(){
     refreshMainScreen();
     showScreen("screen-main");
+  });
+  $("hq-fire-card").addEventListener("click", function(){
+    refreshMapScreen();
+    showScreen("screen-map");
   });
   STAGES.forEach(function(stage, index){
     $("stage-" + (index+1) + "-card").addEventListener("click", function(){
@@ -1748,6 +1917,7 @@
     startStage(state.stageIndex);
   });
 
+  renderGenderOptions();
   refreshMainScreen();
   refreshMainButtons();
 })();
