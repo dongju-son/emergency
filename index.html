@@ -213,6 +213,7 @@
   }
   .dialogue-arrow.visible{display:inline-block;animation:blinkArrow 1s steps(2) infinite;}
   @keyframes blinkArrow{50%{opacity:0;}}
+  #battle-dialogue-box.tap-continue{cursor:pointer;}
 
   .alert-banner{
     display:none;
@@ -347,6 +348,79 @@
     h1{font-size:1.8rem;}
     .hero-emoji{font-size:7rem;}
   }
+
+  /* 번외 미니게임: 히어로 낙서장 (종이 낙서장 느낌으로 일부러 밝은 톤을 씀) */
+  #screen-doodle{
+    --doodle-paper:#fff8ec;
+    --doodle-ink:#1a1a2e;
+    --doodle-panel:#ffffff;
+    --doodle-accent:#ff4d6d;
+    --doodle-accent2:#3d5afe;
+  }
+  #screen-doodle .doodle-board{
+    width:100%;
+    background:var(--doodle-panel);
+    border:3px solid var(--doodle-ink);
+    border-radius:18px;
+    box-shadow:5px 5px 0 var(--doodle-ink);
+    padding:.8rem;
+  }
+  #screen-doodle .doodle-toolbar{
+    display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+    padding:.35rem .25rem .75rem;
+    border-bottom:2px dashed #d8d4c8;
+    margin-bottom:.6rem;
+  }
+  #screen-doodle .doodle-tool-group{display:flex;align-items:center;gap:.5rem;}
+  #screen-doodle .doodle-tool-label{
+    font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#8a8798;
+  }
+  #screen-doodle .doodle-swatches{display:flex;gap:.4rem;flex-wrap:wrap;}
+  #screen-doodle .doodle-swatch{
+    width:24px;height:24px;border-radius:50%;
+    border:2.5px solid var(--doodle-ink);
+    cursor:pointer;padding:0;
+  }
+  #screen-doodle .doodle-swatch.active{
+    box-shadow:0 0 0 2px var(--doodle-paper), 0 0 0 4px var(--doodle-ink);
+  }
+  #screen-doodle .doodle-size-options{display:flex;align-items:center;gap:.4rem;}
+  #screen-doodle .doodle-icon-btn,
+  #screen-doodle .doodle-size-btn{
+    width:32px;height:32px;border-radius:9px;
+    border:2px solid var(--doodle-ink);
+    background:var(--doodle-panel);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.85rem;color:var(--doodle-ink);
+    padding:0;
+  }
+  #screen-doodle .doodle-icon-btn.active{background:var(--doodle-accent2);color:#fff;}
+  #screen-doodle .doodle-size-btn .dot{border-radius:50%;background:var(--doodle-ink);}
+  #screen-doodle .doodle-size-btn.active{background:var(--doodle-accent2);}
+  #screen-doodle .doodle-size-btn.active .dot{background:#fff;}
+  #screen-doodle .doodle-clear-btn{
+    margin-left:auto;
+    border:2px solid var(--doodle-ink);
+    background:#fff;color:var(--doodle-ink);
+    font-weight:700;font-size:.75rem;
+    padding:.5rem .8rem;border-radius:9px;
+    cursor:pointer;display:flex;align-items:center;gap:.3rem;
+  }
+  #screen-doodle .doodle-clear-btn:active{background:var(--doodle-accent);color:#fff;}
+  #screen-doodle .doodle-canvas-frame{
+    position:relative;border-radius:12px;overflow:hidden;
+    border:2px solid var(--doodle-ink);
+    background:#fff;touch-action:none;
+  }
+  #screen-doodle #doodle-canvas{
+    display:block;width:100%;height:320px;cursor:crosshair;
+    background:linear-gradient(#f0eee5 1px, transparent 1px) 0 0/100% 36px, #fff;
+  }
+  #screen-doodle .doodle-hint-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:.6rem;font-size:.68rem;color:#9a97a5;padding:0 4px;
+  }
 </style>
 </head>
 <body>
@@ -415,7 +489,59 @@
     </div>
     <div class="player-chip" id="hq-player-chip"></div>
     <div class="stage-list" id="hq-list"></div>
+
+    <div class="stage-card unlocked" id="btn-doodle-open" style="cursor:pointer;">
+      <div class="stage-emoji">📓</div>
+      <div class="stage-info">
+        <div class="stage-title">번외 · 히어로 낙서장</div>
+        <div class="stage-desc">스테이지 없이 자유롭게 그려보는 낙서장이에요</div>
+      </div>
+    </div>
+
     <button class="btn btn-ghost" id="btn-hq-back">메인으로</button>
+  </section>
+
+  <!-- 번외 미니게임: 히어로 낙서장 -->
+  <section class="screen" id="screen-doodle">
+    <div class="map-header">
+      <h1 style="font-size:1.3rem;">📓 히어로 낙서장</h1>
+      <p class="subtitle">번외 미니게임 · 스테이지 없이 자유롭게 그려보세요</p>
+    </div>
+
+    <div class="doodle-board">
+      <div class="doodle-toolbar">
+        <div class="doodle-tool-group">
+          <span class="doodle-tool-label">색상</span>
+          <div class="doodle-swatches" id="doodle-swatches"></div>
+        </div>
+
+        <div class="doodle-tool-group">
+          <span class="doodle-tool-label">굵기</span>
+          <div class="doodle-size-options" id="doodle-size-options">
+            <button type="button" class="doodle-size-btn" data-size="4" title="얇게"><span class="dot" style="width:6px;height:6px;"></span></button>
+            <button type="button" class="doodle-size-btn active" data-size="10" title="중간"><span class="dot" style="width:11px;height:11px;"></span></button>
+            <button type="button" class="doodle-size-btn" data-size="20" title="굵게"><span class="dot" style="width:16px;height:16px;"></span></button>
+          </div>
+        </div>
+
+        <div class="doodle-tool-group">
+          <button type="button" class="doodle-icon-btn active" id="doodle-pen-btn" title="연필">✏️</button>
+          <button type="button" class="doodle-icon-btn" id="doodle-eraser-btn" title="지우개">🧹</button>
+        </div>
+
+        <button type="button" class="doodle-clear-btn" id="doodle-clear-btn">🗑️ 전체 지우기</button>
+      </div>
+
+      <div class="doodle-canvas-frame">
+        <canvas id="doodle-canvas"></canvas>
+      </div>
+
+      <div class="doodle-hint-row">
+        <span id="doodle-tip-text">손가락이나 마우스로 그려보세요!</span>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" id="btn-doodle-back">본부로 돌아가기</button>
   </section>
 
   <!-- 사건 지도 (본부별) -->
@@ -459,7 +585,7 @@
       </div>
     </div>
 
-    <div class="dialogue-box">
+    <div class="dialogue-box" id="battle-dialogue-box">
       <div class="dialogue-text" id="situation-text"></div>
       <div class="dialogue-arrow" id="dialogue-arrow">▼</div>
     </div>
@@ -3181,6 +3307,7 @@
     state.triedThisQuestion = false;
     state.correctCount = 0;
     state.surpriseShown = false;
+    state.awaitingTapContinue = false;
     $("battle-stage-title").textContent = stage.emoji + " " + stage.shortTitle;
     $("situation-emoji").textContent = stage.emoji;
     refreshBattleAvatar();
@@ -3268,21 +3395,11 @@
       updateGauge();
       state.calm = Math.min(100, state.calm + CALM_STEP);
       updateCalmGauge();
-      typeText($("situation-text"), "역시 잘했어, " + playerName() + "! 위험도가 줄었어요.", 26);
-
-      setTimeout(function(){
-        state.qIndex++;
-        if(state.qIndex >= state.total){
-          triggerStoryEvent("before_clear", STAGES[state.stageIndex].hq, finishStage);
-        } else if(state.correctCount === 3){
-          triggerStoryEvent("after_correct_3", STAGES[state.stageIndex].hq, renderQuestion);
-        } else if(state.qIndex === SURPRISE_AT_QINDEX && !state.surpriseShown){
-          state.surpriseShown = true;
-          triggerSurpriseEvent(STAGES[state.stageIndex].hq, renderQuestion);
-        } else {
-          renderQuestion();
-        }
-      }, 900);
+      typeText($("situation-text"), "역시 잘했어, " + playerName() + "! 위험도가 줄었어요.", 26, function(){
+        $("dialogue-arrow").classList.add("visible");
+        $("battle-dialogue-box").classList.add("tap-continue");
+        state.awaitingTapContinue = true;
+      });
 
     } else {
       btn.classList.add("wrong");
@@ -3302,6 +3419,24 @@
         btn.classList.remove("wrong");
         setOptionsDisabled(false);
       }, 1600);
+    }
+  }
+
+  function advanceAfterCorrect(){
+    if(!state.awaitingTapContinue) return;
+    state.awaitingTapContinue = false;
+    $("dialogue-arrow").classList.remove("visible");
+    $("battle-dialogue-box").classList.remove("tap-continue");
+    state.qIndex++;
+    if(state.qIndex >= state.total){
+      triggerStoryEvent("before_clear", STAGES[state.stageIndex].hq, finishStage);
+    } else if(state.correctCount === 3){
+      triggerStoryEvent("after_correct_3", STAGES[state.stageIndex].hq, renderQuestion);
+    } else if(state.qIndex === SURPRISE_AT_QINDEX && !state.surpriseShown){
+      state.surpriseShown = true;
+      triggerSurpriseEvent(STAGES[state.stageIndex].hq, renderQuestion);
+    } else {
+      renderQuestion();
     }
   }
 
@@ -3492,6 +3627,136 @@
   });
   $("btn-clear-retry").addEventListener("click", function(){
     startStage(state.stageIndex);
+  });
+  $("battle-dialogue-box").addEventListener("click", advanceAfterCorrect);
+
+  // ===== 번외 미니게임: 히어로 낙서장 =====
+  var doodleCanvas = $("doodle-canvas");
+  var doodleCtx = doodleCanvas.getContext("2d");
+  var doodleColors = ["#1A1A2E", "#E4392E", "#3D5AFE", "#2EA043", "#FFC93C", "#FFFFFF", "#FF8C42"];
+  var doodleColor = doodleColors[0];
+  var doodleSize = 10;
+  var doodleEraser = false;
+  var doodleDrawing = false;
+  var doodleLastX = 0, doodleLastY = 0;
+
+  function resizeDoodleCanvas(){
+    var rect = doodleCanvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    var prevImage = (doodleCanvas.width > 0 && doodleCanvas.height > 0) ? doodleCtx.getImageData(0,0,doodleCanvas.width,doodleCanvas.height) : null;
+    doodleCanvas.width = rect.width * dpr;
+    doodleCanvas.height = rect.height * dpr;
+    doodleCtx.setTransform(dpr,0,0,dpr,0,0);
+    doodleCtx.lineCap = "round";
+    doodleCtx.lineJoin = "round";
+    if(prevImage) doodleCtx.putImageData(prevImage, 0, 0);
+  }
+
+  function openDoodlePad(){
+    showScreen("screen-doodle");
+    resizeDoodleCanvas();
+  }
+
+  function renderDoodleSwatches(){
+    var wrap = $("doodle-swatches");
+    doodleColors.forEach(function(c, i){
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "doodle-swatch" + (i === 0 ? " active" : "");
+      btn.style.background = c;
+      if(c === "#FFFFFF") btn.style.boxShadow = "inset 0 0 0 1px #ddd";
+      btn.addEventListener("click", function(){
+        doodleColor = c;
+        doodleEraser = false;
+        document.querySelectorAll(".doodle-swatch").forEach(function(s){ s.classList.remove("active"); });
+        btn.classList.add("active");
+        $("doodle-pen-btn").classList.add("active");
+        $("doodle-eraser-btn").classList.remove("active");
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  function doodlePos(e){
+    var rect = doodleCanvas.getBoundingClientRect();
+    if(e.touches && e.touches.length > 0){
+      return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
+    }
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function doodleDrawLine(x1, y1, x2, y2){
+    doodleCtx.beginPath();
+    doodleCtx.moveTo(x1, y1);
+    doodleCtx.lineTo(x2, y2);
+    if(doodleEraser){
+      doodleCtx.globalCompositeOperation = "destination-out";
+      doodleCtx.lineWidth = doodleSize * 2.2;
+    } else {
+      doodleCtx.globalCompositeOperation = "source-over";
+      doodleCtx.strokeStyle = doodleColor;
+      doodleCtx.lineWidth = doodleSize;
+    }
+    doodleCtx.stroke();
+  }
+
+  function doodleStart(e){
+    doodleDrawing = true;
+    var pos = doodlePos(e);
+    doodleLastX = pos.x; doodleLastY = pos.y;
+    doodleDrawLine(pos.x, pos.y, pos.x, pos.y);
+  }
+  function doodleMove(e){
+    if(!doodleDrawing) return;
+    e.preventDefault();
+    var pos = doodlePos(e);
+    doodleDrawLine(doodleLastX, doodleLastY, pos.x, pos.y);
+    doodleLastX = pos.x; doodleLastY = pos.y;
+  }
+  function doodleEnd(){
+    doodleDrawing = false;
+  }
+
+  renderDoodleSwatches();
+
+  $("doodle-size-options").querySelectorAll(".doodle-size-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      doodleSize = parseInt(btn.dataset.size, 10);
+      document.querySelectorAll(".doodle-size-btn").forEach(function(b){ b.classList.remove("active"); });
+      btn.classList.add("active");
+    });
+  });
+
+  $("doodle-pen-btn").addEventListener("click", function(){
+    doodleEraser = false;
+    $("doodle-pen-btn").classList.add("active");
+    $("doodle-eraser-btn").classList.remove("active");
+  });
+  $("doodle-eraser-btn").addEventListener("click", function(){
+    doodleEraser = true;
+    $("doodle-eraser-btn").classList.add("active");
+    $("doodle-pen-btn").classList.remove("active");
+  });
+  $("doodle-clear-btn").addEventListener("click", function(){
+    doodleCtx.clearRect(0, 0, doodleCanvas.width, doodleCanvas.height);
+    $("doodle-tip-text").textContent = "새 도화지가 준비됐어요!";
+    setTimeout(function(){ $("doodle-tip-text").textContent = "손가락이나 마우스로 그려보세요!"; }, 1800);
+  });
+
+  doodleCanvas.addEventListener("mousedown", doodleStart);
+  doodleCanvas.addEventListener("mousemove", doodleMove);
+  window.addEventListener("mouseup", doodleEnd);
+  doodleCanvas.addEventListener("touchstart", doodleStart, { passive:true });
+  doodleCanvas.addEventListener("touchmove", doodleMove, { passive:false });
+  doodleCanvas.addEventListener("touchend", doodleEnd);
+  doodleCanvas.addEventListener("touchcancel", doodleEnd);
+  window.addEventListener("resize", function(){
+    if($("screen-doodle").classList.contains("active")) resizeDoodleCanvas();
+  });
+
+  $("btn-doodle-open").addEventListener("click", openDoodlePad);
+  $("btn-doodle-back").addEventListener("click", function(){
+    showScreen("screen-hq");
   });
 
   renderGenderOptions();
