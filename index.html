@@ -236,6 +236,36 @@
   }
   .stat-card b{color:var(--accent);font-size:1.1rem;}
 
+  /* 히어로 배지 색칠하기 */
+  .color-palette{width:100%;display:flex;gap:.7rem;justify-content:center;margin:.4rem 0 1.1rem;}
+  .color-swatch{
+    width:64px;height:64px;border-radius:50%;
+    border:3px solid rgba(255,255,255,.25);
+    font-size:.68rem;font-weight:700;color:#1c1c2e;
+    line-height:1.2;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;
+    touch-action:manipulation;
+    transition:transform .12s ease, border-color .12s ease, box-shadow .12s ease;
+  }
+  .color-swatch:active{transform:scale(.94);}
+  .color-swatch.selected{
+    border-color:#fff;
+    transform:scale(1.15);
+    box-shadow:0 0 0 3px var(--accent), 0 4px 10px rgba(0,0,0,.4);
+  }
+  .badge-svg{width:220px;height:258px;margin:.3rem auto 1.2rem;display:block;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));}
+  .badge-region{
+    fill:#232c58;
+    stroke:#5568b8;
+    stroke-width:2;
+    stroke-dasharray:4 3;
+    cursor:pointer;
+    touch-action:manipulation;
+    transition:fill .15s ease;
+  }
+  .badge-region.colored{stroke-dasharray:none;stroke:#1c1c2e;}
+
   /* 도담박사 인트로 / 캐릭터 생성 */
   .text-input{
     width:100%;
@@ -446,6 +476,44 @@
     <button class="btn btn-primary" id="btn-event-continue">계속하기</button>
   </section>
 
+  <!-- 히어로 배지 색칠하기: 안내 -->
+  <section class="screen" id="screen-badge-intro">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text" id="badge-intro-text"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-badge-start" disabled>배지 칠하러 가기</button>
+    <button class="btn btn-ghost" id="btn-badge-skip">다음에 할게요</button>
+  </section>
+
+  <!-- 히어로 배지 색칠하기: 색칠 화면 -->
+  <section class="screen" id="screen-badge-color">
+    <h1 style="font-size:1.2rem;">🎨 히어로 배지 색칠하기</h1>
+    <p class="subtitle">색을 고르고 배지를 콕콕 눌러서 칠해보자!</p>
+    <div class="color-palette">
+      <button type="button" class="color-swatch" id="color-red" style="background:#ef476f;">빨강<br>용기</button>
+      <button type="button" class="color-swatch" id="color-yellow" style="background:#ffd166;">노랑<br>주의</button>
+      <button type="button" class="color-swatch" id="color-blue" style="background:#4cc9f0;">파랑<br>침착</button>
+    </div>
+    <svg class="badge-svg" id="badge-svg" viewBox="0 0 200 235">
+      <polygon class="badge-region" data-region="ribbonLeft" points="72,150 92,150 82,225 58,215"></polygon>
+      <polygon class="badge-region" data-region="ribbonRight" points="108,150 128,150 142,215 118,225"></polygon>
+      <circle class="badge-region" data-region="frame" cx="100" cy="95" r="92"></circle>
+      <circle class="badge-region" data-region="face" cx="100" cy="95" r="74"></circle>
+      <polygon class="badge-region" data-region="star" points="100,40 112.9,77.2 152.3,78.0 120.9,101.8 132.3,139.5 100,117 67.7,139.5 79.1,101.8 47.7,78.0 87.1,77.2"></polygon>
+    </svg>
+    <button class="btn btn-primary" id="btn-badge-done">완성하기</button>
+  </section>
+
+  <!-- 히어로 배지 색칠하기: 완성 -->
+  <section class="screen" id="screen-badge-done">
+    <div class="hero-emoji" style="font-size:4.5rem;">🧑‍🔬</div>
+    <div class="dialogue-box">
+      <div class="dialogue-text" id="badge-done-text"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-badge-continue">계속하기</button>
+  </section>
+
   <!-- 클리어 화면 -->
   <section class="screen" id="screen-clear">
     <div class="clear-emoji">🏅</div>
@@ -466,6 +534,10 @@
   "use strict";
 
   var PROFILE_KEY = "lha_profile";
+  var BADGE_KEY = "heroBadgeColors";
+
+  var selectedBadgeColor = null;
+  var badgeColors = { frame: null, face: null, star: null, ribbonLeft: null, ribbonRight: null };
 
   function loadProfile(){
     try{
@@ -1517,7 +1589,36 @@
     $("clear-firsttry").textContent = state.firstTryCorrect;
     $("clear-total").textContent = state.total;
 
-    showScreen("screen-clear");
+    if(state.stageIndex === 0 && !localStorage.getItem(BADGE_KEY)){
+      showBadgeIntro();
+    } else {
+      showScreen("screen-clear");
+    }
+  }
+
+  function resetBadge(){
+    selectedBadgeColor = null;
+    badgeColors = { frame: null, face: null, star: null, ribbonLeft: null, ribbonRight: null };
+    document.querySelectorAll(".badge-region").forEach(function(r){
+      r.style.fill = "";
+      r.classList.remove("colored");
+    });
+    document.querySelectorAll(".color-swatch").forEach(function(b){ b.classList.remove("selected"); });
+  }
+
+  function showBadgeIntro(){
+    showScreen("screen-badge-intro");
+    $("btn-badge-start").disabled = true;
+    var text = "잘했어, " + playerName() + "! 이제 너만의 히어로 배지를 완성할 시간이야.\n세 가지 색으로 안전 히어로 배지를 칠해보자!";
+    typeText($("badge-intro-text"), text, 26, function(){
+      $("btn-badge-start").disabled = false;
+    });
+  }
+
+  function selectBadgeColor(hex, btn){
+    selectedBadgeColor = hex;
+    document.querySelectorAll(".color-swatch").forEach(function(b){ b.classList.remove("selected"); });
+    btn.classList.add("selected");
   }
 
   function refreshMainButtons(){
@@ -1601,6 +1702,33 @@
     pendingEventContinue = null;
     showScreen("screen-battle");
     if(cb) cb();
+  });
+  $("btn-badge-start").addEventListener("click", function(){
+    resetBadge();
+    showScreen("screen-badge-color");
+  });
+  $("btn-badge-skip").addEventListener("click", function(){
+    showScreen("screen-clear");
+  });
+  $("color-red").addEventListener("click", function(){ selectBadgeColor("#ef476f", $("color-red")); });
+  $("color-yellow").addEventListener("click", function(){ selectBadgeColor("#ffd166", $("color-yellow")); });
+  $("color-blue").addEventListener("click", function(){ selectBadgeColor("#4cc9f0", $("color-blue")); });
+  document.querySelectorAll(".badge-region").forEach(function(region){
+    region.addEventListener("click", function(){
+      if(!selectedBadgeColor) return;
+      region.style.fill = selectedBadgeColor;
+      region.classList.add("colored");
+      badgeColors[region.dataset.region] = selectedBadgeColor;
+    });
+  });
+  $("btn-badge-done").addEventListener("click", function(){
+    localStorage.setItem(BADGE_KEY, JSON.stringify(badgeColors));
+    showScreen("screen-badge-done");
+    var text = "멋지다, " + playerName() + "! 정말 멋진 히어로 배지가 완성됐어!";
+    typeText($("badge-done-text"), text, 26);
+  });
+  $("btn-badge-continue").addEventListener("click", function(){
+    showScreen("screen-clear");
   });
   $("btn-map-back").addEventListener("click", function(){
     refreshMainScreen();
